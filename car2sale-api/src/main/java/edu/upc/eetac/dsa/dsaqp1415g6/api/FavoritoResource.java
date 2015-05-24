@@ -41,10 +41,11 @@ public class FavoritoResource {
 	@Context
 	private SecurityContext security;
 	private DataSource ds = DataSourceSPA.getInstance().getDataSource();
+	private String SeguirAnuncio = "replace into favoritos (username, idanuncio) values (?, ?);";
 	private String ListarAnunciosFavoritos = "select * from favoritos where username=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?"; 
 	private String ListarAnunciosFavoritos_last = "select * from favoritos where username=? and creation_timestamp > ? ORDER BY creation_timestamp DESC";
 	private String DELETE_FAVORITO_QUERY = "delete from favoritos where idanuncio=?";
-	
+	private String GET_FAVORITO_BY_ID_QUERY = "select * from favoritos where idanuncio=?";
 
 	
 	@GET
@@ -169,7 +170,88 @@ private void validateUser(String idanuncio) {
 }
 
 	
+	@GET
+	@Path("/{idanuncio}")
+	@Produces(MediaType.FAVORITOS_API_FAVORITO)
+	public Favorito getFavorito(@PathParam("idanuncio") String idanuncio) {
+		 Favorito favorito = new Favorito();
+		
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+	 
+		PreparedStatement stmt = null;
+		
+		
+		try {
+			stmt = conn.prepareStatement(GET_FAVORITO_BY_ID_QUERY);
+			stmt.setInt(1, Integer.valueOf(idanuncio));
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+			
+				favorito.setUsername(rs.getString("username"));
+				favorito.setIdanuncio(rs.getInt("idanuncio"));
+				favorito.setLast_modified(rs.getTimestamp("last_modified")
+						.getTime());
+				favorito.setCreation_timestamp(rs
+						.getTimestamp("creation_timestamp").getTime());
+			}
+			else {
+				throw new NotFoundException("No hay favorito con idanuncio="
+						+ idanuncio);
+			}
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+		return favorito;
+	}
+
+@POST
+@Consumes(MediaType.FAVORITOS_API_FAVORITO)
+public Favorito create (Favorito favorito) {
 	
+			
+			Connection conn = null;
+			try {
+				conn = ds.getConnection();
+			} catch (SQLException e) {
+				throw new ServerErrorException("Could not connect to the database",
+						Response.Status.SERVICE_UNAVAILABLE);
+			}
+
+			PreparedStatement stmt = null;
+			try {
+				stmt = conn.prepareStatement(SeguirAnuncio);
+				stmt.setString(1, security.getUserPrincipal().getName());
+				stmt.setInt(2,favorito.getIdanuncio());
+				stmt.executeUpdate();
+			} catch (SQLException e) {
+				throw new ServerErrorException(e.getMessage(),
+						Response.Status.INTERNAL_SERVER_ERROR);
+			} finally {
+				try {
+					if (stmt != null)
+						stmt.close();
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
+
+			return favorito;
+
+		}
 		
 		
 

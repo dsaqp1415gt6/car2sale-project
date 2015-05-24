@@ -57,20 +57,62 @@ public class AnuncioResource {
 	private SecurityContext security;
 	private DataSource ds = DataSourceSPA.getInstance().getDataSource();
 	
-	private String UPDATE_CONTADOR_ANUNCIO_BY_ID_QUERY="UPDATE anuncio SET anuncio.cont = anuncio.cont + 1 where idanuncio = ?";
 	private String GET_ANUNCIO_BY_ID_QUERY = "SELECT * FROM anuncio WHERE idanuncio=?";
+	private String UPDATE_CONTADOR_ANUNCIO_BY_ID_QUERY="UPDATE anuncio SET anuncio.cont = anuncio.cont + 1 where idanuncio = ?";
+	private String GET_ANUNCIO_BY_USERNAME= "select * from anuncio where username=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?";
+	private String GET_ANUNCIO_BY_USERNAME_LAST= "select * from anuncio where username=? and creation_timestamp > ? ORDER BY creation_timestamp DESC";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_QUERY = "select * from anuncio where marca=? and modelo=? and creation_timestamp < ifnull(?, now()) order by creation_timestamp desc limit ?";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_QUERY_FROM_LAST = "select * from anuncio where marca=? and modelo=? and creation_timestamp > ? order by creation_timestamp desc";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_QUERY = "select * from anuncio where marca=? and modelo=? and km < ? order by km asc";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PRECIO_QUERY = "select * from anuncio where marca=? and modelo=? and precio < ? and km <= ? order by precio asc";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_MASPRECIO_QUERY = "select * from anuncio where marca=? and modelo=? and precio >= ? and km <= ? order by precio asc";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PRECIO_AND_PROVINCIA_QUERY = "select * from anuncio where marca=? and modelo=? and km< ifnull(?,km) and precio< ifnull(?,precio) and provincia=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PRECIO_AND_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and km >? and precio > ? and provincia=? and creation_timestamp  > ? ORDER BY creation_timestamp DESC";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_PRECIO_QUERY = "select * from anuncio where marca=? and modelo=? and precio < ? order by precio asc";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_MASPRECIO_QUERY = "select * from anuncio where marca=? and modelo=? and precio >= ? order by precio asc";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_PRECIO_PROVINCIA_QUERY = "select * from anuncio where marca=? and modelo=? and precio < ifnull(?,precio) and provincia=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?";
-	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_PRECIO_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and precio > ? and provincia=? and creation_timestamp > ? ORDER BY creation_timestamp DESC limit 10";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_PRECIO_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and precio > ? and provincia=? and creation_timestamp > ? ORDER BY creation_timestamp DESC";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_PROVINCIA_QUERY = "select * from anuncio where marca=? and modelo=? and provincia=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?";
-	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and provincia=? and creation_timestamp > ? ORDER BY creation_timestamp DESC limit 10";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and provincia=? and creation_timestamp > ? ORDER BY creation_timestamp DESC";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PROVINCIA_QUERY = "select * from anuncio where marca=? and modelo=? and km< ifnull (?, km) and provincia=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?";
-	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and km> ? and provincia=? and creation_timestamp> ? ORDER BY creation_timestamp DESC limit 10";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and km> ? and provincia=? and creation_timestamp> ? ORDER BY creation_timestamp DESC";
 	private String INSERT_ANUNCIO_QUERY="insert into anuncio (imagen, cont, username, titulo, descripcion, marca, modelo, km, precio, provincia) values (?,?,?,?,?,?,?,?,?,?)";
 	private String DELETE_ANUNCIO_QUERY = "delete from anuncio where idanuncio=?";
 	private String UPDATE_ANUNCIO_QUERY = "update anuncio set imagen=ifnull(?,imagen), cont=ifnull(?,cont),  titulo=ifnull(?, titulo), descripcion=ifnull(?, descripcion), marca=ifnull(?, marca), modelo=ifnull(?, modelo), km=ifnull(?, km), precio=ifnull(?, precio), provincia=ifnull(?, provincia)  where idanuncio=?";
 	
+	
+	public void AumentarContador (String idanuncio){
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(UPDATE_CONTADOR_ANUNCIO_BY_ID_QUERY);		
+			stmt.setInt(1, Integer.valueOf(idanuncio));
+			
+			stmt.executeUpdate();
+			
+			
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+	 
+		
+	}
+	
+	 
 	@GET
 	@Path("/{idanuncio}")
 	@Produces(MediaType.ANUNCIOS_API_ANUNCIO)
@@ -129,7 +171,14 @@ public class AnuncioResource {
 		AumentarContador(idanuncio);
 		return anuncio;
 	}
-	public void AumentarContador (String idanuncio){
+	
+	@GET
+	@Path("/misanuncios")
+	@Produces(MediaType.ANUNCIOS_API_ANUNCIO_COLLECTION)
+	public AnuncioCollection getMisAnuncios(@QueryParam("length") int length, @QueryParam("before") long before, @QueryParam("after") long after) {
+		AnuncioCollection anuncios = new AnuncioCollection();
+		
+	
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -137,14 +186,157 @@ public class AnuncioResource {
 			throw new ServerErrorException("Could not connect to the database",
 					Response.Status.SERVICE_UNAVAILABLE);
 		}
+	 
+		PreparedStatement stmt = null;
+		
+		
+		try {
+			boolean updateFromLast = after > 0;
+			stmt = updateFromLast ? conn
+					.prepareStatement(GET_ANUNCIO_BY_USERNAME_LAST) : conn
+					.prepareStatement(GET_ANUNCIO_BY_USERNAME);
+			if (updateFromLast) {
+				
+				stmt.setTimestamp(2, new Timestamp(after));
+				stmt.setString(1, security.getUserPrincipal().getName());
+				
+			} else {
+				if (before > 0){
+					stmt.setTimestamp(2, new Timestamp(before));
+					stmt.setString(1, security.getUserPrincipal().getName());
+				
+				}
+				else{
+					
+					stmt.setTimestamp(2, null);
+				    length = (length <= 0) ? 10 : length;
+				    stmt.setInt(3, length);
+				    stmt.setString(1,security.getUserPrincipal().getName());
+					
+				}
+			}
+		
+			ResultSet rs = stmt.executeQuery();
+			boolean first = true;
+			long oldestTimestamp = 0;	
+			while (rs.next()) {
+				Anuncio anuncio = new Anuncio();
+				anuncio.setIdanuncio(rs.getInt("idanuncio"));
+				anuncio.setFilename(rs.getString("imagen") + ".png");				
+				anuncio.setImageURL(app.getProperties().get("imgBaseURL")
+						+ anuncio.getFilename());
+				anuncio.setContador(rs.getInt("cont"));
+				anuncio.setUsername(rs.getString("username"));
+				anuncio.setTitulo(rs.getString("titulo"));
+				anuncio.setDescripcion(rs.getString("descripcion"));
+				anuncio.setMarca(rs.getString("marca"));
+				anuncio.setModelo(rs.getString("modelo"));
+				anuncio.setKm(rs.getInt("km"));
+				anuncio.setPrecio(rs.getInt("precio"));
+				anuncio.setProvincia(rs.getString("provincia"));
+				anuncio.setLast_modified(rs.getTimestamp("last_modified")
+						.getTime());
+				anuncio.setCreation_timestamp(rs
+						.getTimestamp("creation_timestamp").getTime());
+				oldestTimestamp = rs.getTimestamp("creation_timestamp").getTime();
+				anuncio.setLast_modified(oldestTimestamp);
+				if (first) {
+					first = false;
+					anuncios.setNewestTimestamp(anuncio.getCreation_timestamp());
+				}
+				anuncios.addAnuncio(anuncio);
+			}
+			anuncios.setOldestTimestamp(oldestTimestamp);
+			} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+	 
+		return anuncios;
+}
+	@GET
+	@Path("/{marca}/{modelo}")
+	@Produces(MediaType.ANUNCIOS_API_ANUNCIO_COLLECTION)
+	public AnuncioCollection getModelos (@PathParam("marca") String marca, @PathParam("modelo") String modelo, @QueryParam("length") int length, @QueryParam("before") long before, @QueryParam("after") long after) {
+		AnuncioCollection anuncios = new AnuncioCollection();
+		
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+	 
 		PreparedStatement stmt = null;
 		try {
-			stmt = conn.prepareStatement(UPDATE_CONTADOR_ANUNCIO_BY_ID_QUERY);		
-			stmt.setInt(1, Integer.valueOf(idanuncio));
+			boolean updateFromLast = after > 0;
+			stmt = updateFromLast ? conn
+					.prepareStatement( GET_ANUNCIO_BY_MARCA_AND_MODELO_QUERY_FROM_LAST) : conn
+					.prepareStatement( GET_ANUNCIO_BY_MARCA_AND_MODELO_QUERY);
+			if (updateFromLast) {
+				
+				stmt.setTimestamp(3, new Timestamp(after));
+				stmt.setString(1, String.valueOf(marca));
+				stmt.setString(2, String.valueOf(modelo));
+			} else {
+				if (before > 0){
+					stmt.setTimestamp(3, new Timestamp(before));
+				stmt.setString(1, String.valueOf(marca));
+				stmt.setString(2, String.valueOf(modelo));
+				
+				}
+				else{
+					
+					stmt.setTimestamp(3, null);
+				    length = (length <= 0) ? 10 : length;
+				    stmt.setInt(4, length);
+				    stmt.setString(1, marca);
+				    stmt.setString(2, modelo);
+				    
+				
+				}
+			}
 			
-			stmt.executeUpdate();
-			
-			
+			ResultSet rs = stmt.executeQuery();
+			boolean first = true;
+			long oldestTimestamp = 0;			
+			while (rs.next()) {
+				Anuncio anuncio = new Anuncio();
+				anuncio.setIdanuncio(rs.getInt("idanuncio"));
+				anuncio.setFilename(rs.getString("imagen") + ".png");
+				anuncio.setImageURL(app.getProperties().get("imgBaseURL")
+						+ anuncio.getFilename());
+				anuncio.setContador(rs.getInt("cont"));
+				anuncio.setUsername(rs.getString("username"));
+				anuncio.setTitulo(rs.getString("titulo"));
+				anuncio.setDescripcion(rs.getString("descripcion"));
+				anuncio.setMarca(rs.getString("marca"));
+				anuncio.setModelo(rs.getString("modelo"));
+				anuncio.setKm(rs.getInt("km"));
+				anuncio.setPrecio(rs.getInt("precio"));
+				anuncio.setProvincia(rs.getString("provincia"));
+				anuncio.setLast_modified(rs.getTimestamp("last_modified")
+						.getTime());
+				anuncio.setCreation_timestamp(rs
+						.getTimestamp("creation_timestamp").getTime());
+				oldestTimestamp = rs.getTimestamp("creation_timestamp").getTime();
+				anuncio.setLast_modified(oldestTimestamp);
+				if (first) {
+					first = false;
+					anuncios.setNewestTimestamp(anuncio.getCreation_timestamp());
+				}
+				anuncios.addAnuncio(anuncio);
+				
+			}
+			anuncios.setOldestTimestamp(oldestTimestamp);
 		} catch (SQLException e) {
 			throw new ServerErrorException(e.getMessage(),
 					Response.Status.INTERNAL_SERVER_ERROR);
@@ -157,8 +349,241 @@ public class AnuncioResource {
 			}
 		}
 	 
-		
+		return anuncios;
 	}
+	
+	@GET
+	@Path("/{marca}/{modelo}/{km}")
+	@Produces(MediaType.ANUNCIOS_API_ANUNCIO_COLLECTION)
+	public AnuncioCollection getKm (@PathParam("marca") String marca, @PathParam("modelo") String modelo, @PathParam("km") Integer km) {
+		AnuncioCollection anuncios = new AnuncioCollection();
+	 
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+	 
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_QUERY);		
+			stmt.setString(1, String.valueOf(marca));
+			stmt.setString(2, String.valueOf(modelo));
+			stmt.setInt(3, Integer.valueOf(km));
+			ResultSet rs = stmt.executeQuery();
+		
+						
+			while (rs.next()) {
+				Anuncio anuncio = new Anuncio();
+				anuncio.setIdanuncio(rs.getInt("idanuncio"));
+				anuncio.setFilename(rs.getString("imagen") + ".png");
+				anuncio.setImageURL(app.getProperties().get("imgBaseURL")
+						+ anuncio.getFilename());
+				anuncio.setContador(rs.getInt("cont"));
+				anuncio.setUsername(rs.getString("username"));
+				anuncio.setTitulo(rs.getString("titulo"));
+				anuncio.setDescripcion(rs.getString("descripcion"));
+				anuncio.setMarca(rs.getString("marca"));
+				anuncio.setModelo(rs.getString("modelo"));
+				anuncio.setKm(rs.getInt("km"));
+				anuncio.setPrecio(rs.getInt("precio"));
+				anuncio.setProvincia(rs.getString("provincia"));
+				anuncio.setLast_modified(rs.getTimestamp("last_modified")
+						.getTime());
+				anuncio.setCreation_timestamp(rs
+						.getTimestamp("creation_timestamp").getTime());
+				
+			
+				anuncios.addAnuncio(anuncio);				
+			}
+		
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+	 
+		return anuncios;
+	}
+	
+	@GET
+	@Path("/{marca}/{modelo}/{precio}/{km}")
+	@Produces(MediaType.ANUNCIOS_API_ANUNCIO_COLLECTION)
+	public AnuncioCollection getPrecio (@PathParam("marca") String marca, @PathParam("modelo") String modelo, @PathParam("km") Integer km, @PathParam("precio") Integer precio) {
+		AnuncioCollection anuncios = new AnuncioCollection();
+	 
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+	 
+		PreparedStatement stmt = null;
+		try {
+			if (precio<70000){
+				
+				stmt = conn.prepareStatement( GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PRECIO_QUERY);
+				
+			}
+				else if (precio>=70000){
+					
+				stmt = conn.prepareStatement( GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_MASPRECIO_QUERY);
+			}
+			
+			stmt.setString(1, String.valueOf(marca));
+			stmt.setString(2, String.valueOf(modelo));
+			stmt.setInt(3, Integer.valueOf(precio));
+			stmt.setInt(4, Integer.valueOf(km));
+			ResultSet rs = stmt.executeQuery();
+													
+			while (rs.next()) {
+				Anuncio anuncio = new Anuncio();
+				anuncio.setIdanuncio(rs.getInt("idanuncio"));
+				anuncio.setFilename(rs.getString("imagen") + ".png");
+				anuncio.setImageURL(app.getProperties().get("imgBaseURL")
+						+ anuncio.getFilename());
+				anuncio.setContador(rs.getInt("cont"));
+				anuncio.setUsername(rs.getString("username"));
+				anuncio.setTitulo(rs.getString("titulo"));
+				anuncio.setDescripcion(rs.getString("descripcion"));
+				anuncio.setMarca(rs.getString("marca"));
+				anuncio.setModelo(rs.getString("modelo"));
+				anuncio.setKm(rs.getInt("km"));
+				anuncio.setPrecio(rs.getInt("precio"));
+				anuncio.setProvincia(rs.getString("provincia"));
+				anuncio.setLast_modified(rs.getTimestamp("last_modified")
+						.getTime());
+				anuncio.setCreation_timestamp(rs
+						.getTimestamp("creation_timestamp").getTime());
+			
+					
+				
+				anuncios.addAnuncio(anuncio);					
+			}
+		
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+	 
+		return anuncios;
+	}
+	@GET
+	@Path("/{marca}/{modelo}/{km}/{precio}/{provincia}")
+	@Produces(MediaType.ANUNCIOS_API_ANUNCIO_COLLECTION)
+	public AnuncioCollection getProvincia (@PathParam("marca") String marca, @PathParam("modelo") String modelo, @PathParam("km") Integer km, @PathParam("precio") Integer precio, @PathParam("provincia") String provincia, @QueryParam("length") int length, @QueryParam("before") long before, @QueryParam("after") long after) {
+		AnuncioCollection anuncios = new AnuncioCollection();
+	 
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+	 
+		PreparedStatement stmt = null;
+			try {
+				boolean updateFromLast = after > 0;
+				stmt = updateFromLast ? conn
+						.prepareStatement(GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PRECIO_AND_PROVINCIA_QUERY_LAST) : conn
+						.prepareStatement(GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PRECIO_AND_PROVINCIA_QUERY);
+				if (updateFromLast) {
+					
+					stmt.setTimestamp(6, new Timestamp(after));
+					stmt.setString(1, String.valueOf(marca));
+					stmt.setString(2, String.valueOf(modelo));
+					stmt.setInt(3, Integer.valueOf(km));
+					stmt.setInt(4, Integer.valueOf(precio));
+					stmt.setString(5, String.valueOf(provincia));
+				} else {
+					if (before > 0){
+						stmt.setTimestamp(6, new Timestamp(before));
+						stmt.setString(1, String.valueOf(marca));
+						stmt.setString(2, String.valueOf(modelo));
+						stmt.setInt(3, Integer.valueOf(km));
+						stmt.setInt(4, Integer.valueOf(precio));
+						stmt.setString(5, String.valueOf(provincia));
+					
+					}
+					else{
+						
+						stmt.setTimestamp(6, null);
+					    length = (length <= 0) ? 10 : length;
+					    stmt.setInt(7, length);
+					    stmt.setString(1, String.valueOf(marca));
+						stmt.setString(2, String.valueOf(modelo));
+						stmt.setInt(3, Integer.valueOf(km));
+						stmt.setInt(4, Integer.valueOf(precio));
+						stmt.setString(5, String.valueOf(provincia));
+					    
+					
+					}
+				}
+				
+				ResultSet rs = stmt.executeQuery();
+				boolean first = true;
+				long oldestTimestamp = 0;
+			while (rs.next()) {
+				Anuncio anuncio = new Anuncio();
+				anuncio.setIdanuncio(rs.getInt("idanuncio"));
+				anuncio.setFilename(rs.getString("imagen") + ".png");
+				anuncio.setImageURL(app.getProperties().get("imgBaseURL")
+						+ anuncio.getFilename());
+				anuncio.setContador(rs.getInt("cont"));
+				anuncio.setUsername(rs.getString("username"));
+				anuncio.setTitulo(rs.getString("titulo"));
+				anuncio.setDescripcion(rs.getString("descripcion"));
+				anuncio.setMarca(rs.getString("marca"));
+				anuncio.setModelo(rs.getString("modelo"));
+				anuncio.setKm(rs.getInt("km"));
+				anuncio.setPrecio(rs.getInt("precio"));
+				anuncio.setProvincia(rs.getString("provincia"));
+				anuncio.setLast_modified(rs.getTimestamp("last_modified")
+						.getTime());
+				anuncio.setCreation_timestamp(rs
+						.getTimestamp("creation_timestamp").getTime());
+				oldestTimestamp = rs.getTimestamp("creation_timestamp").getTime();
+				anuncio.setLast_modified(oldestTimestamp);
+				if (first) {
+					first = false;
+					anuncios.setNewestTimestamp(anuncio.getCreation_timestamp());
+				}
+				anuncios.addAnuncio(anuncio);
+			}
+			anuncios.setOldestTimestamp(oldestTimestamp);
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+	 
+		return anuncios;
+	}
+	
 	@GET
 	@Path("/precios/{marca}/{modelo}/{precio}")
 	@Produces(MediaType.ANUNCIOS_API_ANUNCIO_COLLECTION)
