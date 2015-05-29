@@ -57,7 +57,12 @@ public class AnuncioResource {
 	private SecurityContext security;
 	private DataSource ds = DataSourceSPA.getInstance().getDataSource();
 	
+	private String GET_ANUNCIOS_QUERY = "SELECT * FROM anuncio WHERE creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp asc limit ?";
+	private String GET_ANUNCIOS_QUERY_FROM_LAST = "SELECT * FROM anuncio WHERE creation_timestamp > ? ORDER BY creation_timestamp DESC limit ?";
 	private String GET_ANUNCIO_BY_ID_QUERY = "SELECT * FROM anuncio WHERE idanuncio=?";
+	private String GET_ANUNCIO_BY_ID_MARCA = "SELECT * FROM anuncio WHERE marca=?";
+	private String GET_ANUNCIO_BY_ID_PRECIO= "select * from anuncio where precio> ?  order by precio asc";
+	private String GET_ANUNCIO_BY_ID_KM= "select * from anuncio where km> ?  order by km asc";
 	private String UPDATE_CONTADOR_ANUNCIO_BY_ID_QUERY="UPDATE anuncio SET anuncio.cont = anuncio.cont + 1 where idanuncio = ?";
 	private String GET_ANUNCIO_BY_USERNAME= "select * from anuncio where username=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?";
 	private String GET_ANUNCIO_BY_USERNAME_LAST= "select * from anuncio where username=? and creation_timestamp > ? ORDER BY creation_timestamp DESC";
@@ -80,6 +85,86 @@ public class AnuncioResource {
 	private String DELETE_ANUNCIO_QUERY = "delete from anuncio where idanuncio=?";
 	private String UPDATE_ANUNCIO_QUERY = "update anuncio set imagen=ifnull(?,imagen), cont=ifnull(?,cont),  titulo=ifnull(?, titulo), descripcion=ifnull(?, descripcion), marca=ifnull(?, marca), modelo=ifnull(?, modelo), km=ifnull(?, km), precio=ifnull(?, precio), provincia=ifnull(?, provincia)  where idanuncio=?";
 	
+	@GET
+	@Produces(MediaType.ANUNCIOS_API_ANUNCIO_COLLECTION)
+	public AnuncioCollection getAnuncios(@QueryParam("length") int length, @QueryParam("before") long before, @QueryParam("after") long after) {
+		AnuncioCollection anuncios = new AnuncioCollection();
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+	 
+		PreparedStatement stmt = null;
+		System.out.println(before);
+		System.out.println(after);
+		System.out.println(length);
+		try {
+			boolean updateFromLast = after > 0;
+			System.out.println(updateFromLast);
+			stmt = updateFromLast ? conn
+					.prepareStatement(GET_ANUNCIOS_QUERY_FROM_LAST) : conn
+					.prepareStatement(GET_ANUNCIOS_QUERY);
+			if (updateFromLast) {
+				stmt.setTimestamp(1, new Timestamp(before));
+				length = (length <= 0) ? 10 : length;
+				stmt.setInt(2, length);
+			}	 else {
+				if (before > 0)
+					stmt.setTimestamp(1, new Timestamp(before));
+					else
+					stmt.setTimestamp(1, null);
+					length = (length <= 0) ? 10 : length;
+					stmt.setInt(2, length);
+
+			}
+			ResultSet rs = stmt.executeQuery();
+			boolean first = true;
+			long oldestTimestamp=0;
+			while (rs.next()) {
+				Anuncio anuncio = new Anuncio();
+				anuncio.setIdanuncio(rs.getInt("idanuncio"));
+				anuncio.setFilename(rs.getString("imagen") + ".png");				
+				anuncio.setImageURL(app.getProperties().get("imgBaseURL")
+						+ anuncio.getFilename());
+				anuncio.setContador(rs.getInt("cont"));
+				anuncio.setUsername(rs.getString("username"));
+				anuncio.setTitulo(rs.getString("titulo"));
+				anuncio.setDescripcion(rs.getString("descripcion"));
+				anuncio.setMarca(rs.getString("marca"));
+				anuncio.setModelo(rs.getString("modelo"));
+				anuncio.setKm(rs.getInt("km"));
+				anuncio.setPrecio(rs.getInt("precio"));
+				anuncio.setProvincia(rs.getString("provincia"));
+				anuncio.setCreation_timestamp(rs
+						.getTimestamp("creation_timestamp").getTime());
+				oldestTimestamp = rs.getTimestamp("last_modified").getTime();
+				anuncio.setLast_modified(oldestTimestamp);
+				if (first) {
+					first = false;
+					anuncios.setNewestTimestamp(anuncio.getLast_modified());
+					
+				}
+				anuncios.addAnuncio(anuncio);
+			}
+			anuncios.setOldestTimestamp(oldestTimestamp);
+		
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+
+		return anuncios;
+	}
 	
 	public void AumentarContador (String idanuncio){
 		Connection conn = null;
@@ -111,7 +196,179 @@ public class AnuncioResource {
 	 
 		
 	}
+	//FUNCION EXCLUSIVA PARA APP ANDROID
+	@GET
+	@Path("/marcas/{marca}")
+	@Produces(MediaType.ANUNCIOS_API_ANUNCIO_COLLECTION)
+	public AnuncioCollection getMarca (@PathParam("marca") String marca) {
+		AnuncioCollection anuncios = new AnuncioCollection();
+	 
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+	 
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(GET_ANUNCIO_BY_ID_MARCA);
+			stmt.setString(1, String.valueOf(marca));
+		
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				Anuncio anuncio = new Anuncio();
+				anuncio.setIdanuncio(rs.getInt("idanuncio"));
+				anuncio.setFilename(rs.getString("imagen") + ".png");
+				anuncio.setImageURL(app.getProperties().get("imgBaseURL")
+						+ anuncio.getFilename());
+				anuncio.setContador(rs.getInt("cont"));
+				anuncio.setUsername(rs.getString("username"));
+				anuncio.setTitulo(rs.getString("titulo"));
+				anuncio.setDescripcion(rs.getString("descripcion"));
+				anuncio.setMarca(rs.getString("marca"));
+				anuncio.setModelo(rs.getString("modelo"));
+				anuncio.setKm(rs.getInt("km"));
+				anuncio.setPrecio(rs.getInt("precio"));
+				anuncio.setProvincia(rs.getString("provincia"));
+				anuncio.setLast_modified(rs.getTimestamp("last_modified")
+						.getTime());
+				anuncio.setCreation_timestamp(rs
+						.getTimestamp("creation_timestamp").getTime());
+				anuncios.addAnuncio(anuncio);
+				
+			}
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+	 
+		return anuncios;
+	}
+	// FUNCION EXCLUSIVA PARA APP ANDROID
+	@GET
+	@Path("/precios/{precio}")
+	@Produces(MediaType.ANUNCIOS_API_ANUNCIO_COLLECTION)
+	public AnuncioCollection getPrecios (@PathParam("precio") String precio) {
+		AnuncioCollection anuncios = new AnuncioCollection();
+		
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+	 
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(GET_ANUNCIO_BY_ID_PRECIO);
+			stmt.setString(1, String.valueOf(precio));
+		
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				Anuncio anuncio = new Anuncio();
+				anuncio.setIdanuncio(rs.getInt("idanuncio"));
+				anuncio.setFilename(rs.getString("imagen") + ".png");
+				anuncio.setImageURL(app.getProperties().get("imgBaseURL")
+						+ anuncio.getFilename());
+				anuncio.setContador(rs.getInt("cont"));
+				anuncio.setUsername(rs.getString("username"));
+				anuncio.setTitulo(rs.getString("titulo"));
+				anuncio.setDescripcion(rs.getString("descripcion"));
+				anuncio.setMarca(rs.getString("marca"));
+				anuncio.setModelo(rs.getString("modelo"));
+				anuncio.setKm(rs.getInt("km"));
+				anuncio.setPrecio(rs.getInt("precio"));
+				anuncio.setProvincia(rs.getString("provincia"));
+				anuncio.setLast_modified(rs.getTimestamp("last_modified")
+						.getTime());
+				anuncio.setCreation_timestamp(rs
+						.getTimestamp("creation_timestamp").getTime());
+				anuncios.addAnuncio(anuncio);
+				
+			}
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+	 
+		return anuncios;
+	}
 	
+	// FUNCION EXCLUSIVA PARA APP ANDROID
+		@GET
+		@Path("/kms/{km}")
+		@Produces(MediaType.ANUNCIOS_API_ANUNCIO_COLLECTION)
+		public AnuncioCollection getKms (@PathParam("km") String km) {
+			AnuncioCollection anuncios = new AnuncioCollection();
+			
+			Connection conn = null;
+			try {
+				conn = ds.getConnection();
+			} catch (SQLException e) {
+				throw new ServerErrorException("Could not connect to the database",
+						Response.Status.SERVICE_UNAVAILABLE);
+			}
+		 
+			PreparedStatement stmt = null;
+			try {
+				stmt = conn.prepareStatement(GET_ANUNCIO_BY_ID_KM);
+				stmt.setString(1, String.valueOf(km));
+			
+				ResultSet rs = stmt.executeQuery();
+				while (rs.next()) {
+					Anuncio anuncio = new Anuncio();
+					anuncio.setIdanuncio(rs.getInt("idanuncio"));
+					anuncio.setFilename(rs.getString("imagen") + ".png");
+					anuncio.setImageURL(app.getProperties().get("imgBaseURL")
+							+ anuncio.getFilename());
+					anuncio.setContador(rs.getInt("cont"));
+					anuncio.setUsername(rs.getString("username"));
+					anuncio.setTitulo(rs.getString("titulo"));
+					anuncio.setDescripcion(rs.getString("descripcion"));
+					anuncio.setMarca(rs.getString("marca"));
+					anuncio.setModelo(rs.getString("modelo"));
+					anuncio.setKm(rs.getInt("km"));
+					anuncio.setPrecio(rs.getInt("precio"));
+					anuncio.setProvincia(rs.getString("provincia"));
+					anuncio.setLast_modified(rs.getTimestamp("last_modified")
+							.getTime());
+					anuncio.setCreation_timestamp(rs
+							.getTimestamp("creation_timestamp").getTime());
+					anuncios.addAnuncio(anuncio);
+					
+				}
+			} catch (SQLException e) {
+				throw new ServerErrorException(e.getMessage(),
+						Response.Status.INTERNAL_SERVER_ERROR);
+			} finally {
+				try {
+					if (stmt != null)
+						stmt.close();
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
+		 
+			return anuncios;
+		}
+		 
 	 
 	@GET
 	@Path("/{idanuncio}")

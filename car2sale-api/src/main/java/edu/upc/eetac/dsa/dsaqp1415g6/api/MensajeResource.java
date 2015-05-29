@@ -57,7 +57,7 @@ public class MensajeResource {
 	private String GET_MENSAJES_QUERY = "select * from mensajes where usuariorecibe=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?";
 	private String GET_MENSAJES_QUERY_LAST = "select * from mensajes where usuariorecibe=? and creation_timestamp > ? ORDER BY creation_timestamp DESC";
 	private String GET_MENSAJE_BY_ID_QUERY = "SELECT * FROM mensajes WHERE idmensaje=?";
-
+	private String INSERT_MENSAJE_QUERY = "insert into mensajes (usuarioenvia, usuariorecibe, anuncio, mensaje) values (?, ?, ?, ?)";
 	
 	@GET
 	@Produces(MediaType.MENSAJES_API_MENSAJE_COLLECTION)
@@ -190,7 +190,50 @@ public class MensajeResource {
 		return mensaje;
 	}
 	
+	@POST
+	@Consumes(MediaType.MENSAJES_API_MENSAJE)
+	@Produces(MediaType.MENSAJES_API_MENSAJE)
+	public Mensaje createMensaje(Mensaje mensaje) {
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+	 
+		PreparedStatement stmt = null;
+		try {
+			stmt = conn.prepareStatement(INSERT_MENSAJE_QUERY,
+					Statement.RETURN_GENERATED_KEYS);
+	 
+			stmt.setString(1, mensaje.getUsuarioenvia());
+			stmt.setString(2, mensaje.getUsuariorecibe());
+			stmt.setInt(3, mensaje.getAnuncio());
+			stmt.setString(4, mensaje.getMensaje());
+			stmt.executeUpdate();
+			ResultSet rs = stmt.getGeneratedKeys();
+			if (rs.next()) {
+				int idmensaje = rs.getInt(1);
+	 
+				mensaje = getMensaje(Integer.toString(idmensaje));
+			} else {
+				// Something has failed...
+			}
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
+	 
+		return mensaje;
+	}
 	
 
 }
-
