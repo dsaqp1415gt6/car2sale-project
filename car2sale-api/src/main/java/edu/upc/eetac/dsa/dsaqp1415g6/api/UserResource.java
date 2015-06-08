@@ -51,7 +51,7 @@ public class UserResource {
 	private final static String INSERT_USER_INTO_USERS = "insert into users values(?, ?, MD5(?), ?, ?)";
 	private final static String INSERT_USER_INTO_USER_ROLES = "insert into user_roles values (?, 'registrado')";
 	private final static String GET_USER_BY_ID_QUERY= "select * from users where username=?";
-
+	private final static String GET_ROLENAME_BY_ID_QUERY= "select rolename from user_roles where username=?";
 	@POST
 	@Consumes(javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA)
 	public User createUser(@FormDataParam("username") String username, 
@@ -264,5 +264,48 @@ public class UserResource {
 	
 		return user;
 	}
+	@GET
+	@Path("/roles/{username}")
+	@Produces(MediaType.MENSAJES_API_MENSAJE)
+	public Roles getRolename(@PathParam("username") String username) {
+		Roles roles  = new Roles();
+		
+		Connection conn = null;
+		try {
+			conn = ds.getConnection();
+		} catch (SQLException e) {
+			throw new ServerErrorException("Could not connect to the database",
+					Response.Status.SERVICE_UNAVAILABLE);
+		}
+	 
+		PreparedStatement stmt = null;
+		
+		
+		try {
+			stmt = conn.prepareStatement(GET_ROLENAME_BY_ID_QUERY);
+			stmt.setString(1, String.valueOf(username));
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				roles.setRolename(rs.getString("rolename"));
+			
+				
+			}
+			else {
+				throw new NotFoundException("No hay rolename con nombre de usuario ="
+						+ username);
+			}
+		} catch (SQLException e) {
+			throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			try {
+				if (stmt != null)
+					stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+			}
+		}
 	
+		return roles;
+	}
 }
