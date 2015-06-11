@@ -57,30 +57,30 @@ public class AnuncioResource {
 	private SecurityContext security;
 	private DataSource ds = DataSourceSPA.getInstance().getDataSource();
 	
-	private String GET_ANUNCIOS_QUERY = "SELECT * FROM anuncio WHERE creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp asc limit ?";
-	private String GET_ANUNCIOS_QUERY_FROM_LAST = "SELECT * FROM anuncio WHERE creation_timestamp > ? ORDER BY creation_timestamp DESC limit ?";
+	private String GET_ANUNCIOS_QUERY = "SELECT * FROM anuncio WHERE creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?";
+	private String GET_ANUNCIOS_QUERY_FROM_LAST = "SELECT * FROM anuncio WHERE creation_timestamp < ? ORDER BY creation_timestamp DESC limit 10";
 	private String GET_ANUNCIO_BY_ID_QUERY = "SELECT * FROM anuncio WHERE idanuncio=?";
 	private String GET_ANUNCIO_BY_ID_MARCA = "SELECT * FROM anuncio WHERE marca=?";
 	private String GET_ANUNCIO_BY_ID_PRECIO= "select * from anuncio where precio> ?  order by precio asc";
 	private String GET_ANUNCIO_BY_ID_KM= "select * from anuncio where km> ?  order by km asc";
 	private String UPDATE_CONTADOR_ANUNCIO_BY_ID_QUERY="UPDATE anuncio SET anuncio.cont = anuncio.cont + 1 where idanuncio = ?";
 	private String GET_ANUNCIO_BY_USERNAME= "select * from anuncio where username=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?";
-	private String GET_ANUNCIO_BY_USERNAME_LAST= "select * from anuncio where username=? and creation_timestamp > ? ORDER BY creation_timestamp DESC";
+	private String GET_ANUNCIO_BY_USERNAME_LAST= "select * from anuncio where username=? and creation_timestamp > ? ORDER BY creation_timestamp DESC limit 10";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_QUERY = "select * from anuncio where marca=? and modelo=? and creation_timestamp < ifnull(?, now()) order by creation_timestamp desc limit ?";
-	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_QUERY_FROM_LAST = "select * from anuncio where marca=? and modelo=? and creation_timestamp > ? order by creation_timestamp desc";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_QUERY_FROM_LAST = "select * from anuncio where marca=? and modelo=? and creation_timestamp > ? order by creation_timestamp desc limit 10";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_QUERY = "select * from anuncio where marca=? and modelo=? and km < ? order by km asc";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PRECIO_QUERY = "select * from anuncio where marca=? and modelo=? and precio < ? and km <= ? order by precio asc";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_MASPRECIO_QUERY = "select * from anuncio where marca=? and modelo=? and precio >= ? and km <= ? order by precio asc";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PRECIO_AND_PROVINCIA_QUERY = "select * from anuncio where marca=? and modelo=? and km< ifnull(?,km) and precio< ifnull(?,precio) and provincia=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?";
-	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PRECIO_AND_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and km >? and precio > ? and provincia=? and creation_timestamp  > ? ORDER BY creation_timestamp DESC";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PRECIO_AND_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and km >? and precio > ? and provincia=? and creation_timestamp  > ? ORDER BY creation_timestamp DESC limit 10";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_PRECIO_QUERY = "select * from anuncio where marca=? and modelo=? and precio < ? order by precio asc";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_MASPRECIO_QUERY = "select * from anuncio where marca=? and modelo=? and precio >= ? order by precio asc";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_PRECIO_PROVINCIA_QUERY = "select * from anuncio where marca=? and modelo=? and precio < ifnull(?,precio) and provincia=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?";
-	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_PRECIO_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and precio > ? and provincia=? and creation_timestamp > ? ORDER BY creation_timestamp DESC";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_PRECIO_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and precio > ? and provincia=? and creation_timestamp > ? ORDER BY creation_timestamp DESC limit 10";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_PROVINCIA_QUERY = "select * from anuncio where marca=? and modelo=? and provincia=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?";
-	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and provincia=? and creation_timestamp > ? ORDER BY creation_timestamp DESC";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and provincia=? and creation_timestamp > ? ORDER BY creation_timestamp DESC limit 10";
 	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PROVINCIA_QUERY = "select * from anuncio where marca=? and modelo=? and km< ifnull (?, km) and provincia=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?";
-	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and km> ? and provincia=? and creation_timestamp> ? ORDER BY creation_timestamp DESC";
+	private String GET_ANUNCIO_BY_MARCA_AND_MODELO_AND_KM_AND_PROVINCIA_QUERY_LAST = "select * from anuncio where marca=? and modelo=? and km> ? and provincia=? and creation_timestamp> ? ORDER BY creation_timestamp DESC limit 10";
 	private String INSERT_ANUNCIO_QUERY="insert into anuncio (imagen, cont, username, titulo, descripcion, marca, modelo, km, precio, provincia) values (?,?,?,?,?,?,?,?,?,?)";
 	private String DELETE_ANUNCIO_QUERY = "delete from anuncio where idanuncio=?";
 	private String UPDATE_ANUNCIO_QUERY = "update anuncio set imagen=ifnull(?,imagen), cont=ifnull(?,cont),  titulo=ifnull(?, titulo), descripcion=ifnull(?, descripcion), marca=ifnull(?, marca), modelo=ifnull(?, modelo), km=ifnull(?, km), precio=ifnull(?, precio), provincia=ifnull(?, provincia)  where idanuncio=?";
@@ -89,6 +89,7 @@ public class AnuncioResource {
 	@Produces(MediaType.ANUNCIOS_API_ANUNCIO_COLLECTION)
 	public AnuncioCollection getAnuncios(@QueryParam("length") int length, @QueryParam("before") long before, @QueryParam("after") long after) {
 		AnuncioCollection anuncios = new AnuncioCollection();
+					
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -98,31 +99,33 @@ public class AnuncioResource {
 		}
 	 
 		PreparedStatement stmt = null;
-		System.out.println(before);
-		System.out.println(after);
-		System.out.println(length);
+		
 		try {
 			boolean updateFromLast = after > 0;
-			System.out.println(updateFromLast);
 			stmt = updateFromLast ? conn
 					.prepareStatement(GET_ANUNCIOS_QUERY_FROM_LAST) : conn
 					.prepareStatement(GET_ANUNCIOS_QUERY);
 			if (updateFromLast) {
-				stmt.setTimestamp(1, new Timestamp(before));
+				stmt.setTimestamp(1, new Timestamp(after));
+			} else {
+				if (before > 0)
+					
+					stmt.setTimestamp(1, new Timestamp(before));
+					
+				else
+					
+				stmt.setTimestamp(1, null);
 				length = (length <= 0) ? 10 : length;
 				stmt.setInt(2, length);
-			}	 else {
-				if (before > 0)
-					stmt.setTimestamp(1, new Timestamp(before));
-					else
-					stmt.setTimestamp(1, null);
-					length = (length <= 0) ? 10 : length;
-					stmt.setInt(2, length);
-
+				
+				
+				
 			}
+			
 			ResultSet rs = stmt.executeQuery();
 			boolean first = true;
-			long oldestTimestamp=0;
+			long oldestTimestamp = 0;
+		
 			while (rs.next()) {
 				Anuncio anuncio = new Anuncio();
 				anuncio.setIdanuncio(rs.getInt("idanuncio"));
@@ -138,19 +141,19 @@ public class AnuncioResource {
 				anuncio.setKm(rs.getInt("km"));
 				anuncio.setPrecio(rs.getInt("precio"));
 				anuncio.setProvincia(rs.getString("provincia"));
+				anuncio.setLast_modified(rs.getTimestamp("last_modified")
+						.getTime());
 				anuncio.setCreation_timestamp(rs
 						.getTimestamp("creation_timestamp").getTime());
-				oldestTimestamp = rs.getTimestamp("last_modified").getTime();
+				oldestTimestamp = rs.getTimestamp("creation_timestamp").getTime();
 				anuncio.setLast_modified(oldestTimestamp);
 				if (first) {
 					first = false;
 					anuncios.setNewestTimestamp(anuncio.getLast_modified());
-					
 				}
 				anuncios.addAnuncio(anuncio);
 			}
 			anuncios.setOldestTimestamp(oldestTimestamp);
-		
 		} catch (SQLException e) {
 			throw new ServerErrorException(e.getMessage(),
 					Response.Status.INTERNAL_SERVER_ERROR);
@@ -162,7 +165,7 @@ public class AnuncioResource {
 			} catch (SQLException e) {
 			}
 		}
-
+	 
 		return anuncios;
 	}
 	
@@ -1242,8 +1245,14 @@ public class AnuncioResource {
 			@FormDataParam("descripcion") String descripcion,
 			@FormDataParam("image") InputStream image,
 			@FormDataParam("image") FormDataContentDisposition fileDisposition) {
+		Anuncio anuncio = new Anuncio();
 		validateUser(idanuncio);
-	//	validateUpdateAnuncio(anuncio);
+		anuncio.setTitulo(titulo);
+		anuncio.setMarca(marca);
+		anuncio.setMarca(modelo);
+		anuncio.setProvincia(provincia);
+		anuncio.setDescripcion(descripcion);
+		validateUpdateAnuncio(anuncio);
 		UUID uuid = writeAndConvertImage(image);
 		Connection conn = null;
 		try {
@@ -1282,7 +1291,7 @@ public class AnuncioResource {
 			} catch (SQLException e) {
 			}
 		}
-		Anuncio anuncio = new Anuncio();
+
 		anuncio.setFilename(uuid.toString() + ".png");
 		anuncio.setImageURL(app.getProperties().get("imgBaseURL")
 				+ anuncio.getFilename());
@@ -1293,18 +1302,18 @@ public class AnuncioResource {
 		if (anuncio.getTitulo() != null && anuncio.getTitulo().length() > 100)
 			throw new BadRequestException(
 					"El titulo del anuncio no puede ser mayor de 100 caracteres.");
-		if (anuncio.getDescripcion() != null && anuncio.getDescripcion().length() > 500)
+		if (anuncio.getDescripcion() != null && anuncio.getDescripcion().length() > 2000)
 			throw new BadRequestException(
-					"La descripcion del anuncio no puede ser mayor de 500 caracteres.");
+					"La descripcion del anuncio no puede ser mayor de 2000 caracteres.");
 		if (anuncio.getMarca() != null && anuncio.getMarca().length() > 20)
 			throw new BadRequestException(
-					"La marca del coche no puede ser mayor de 20 caracteres.");
+					"La marca del vehiculo no puede ser mayor de 20 caracteres.");
 		if (anuncio.getModelo() != null && anuncio.getModelo().length() > 40)
 			throw new BadRequestException(
-					"El modelo del coche no puede ser mayor de 40 caracteres.");
-		if (anuncio.getProvincia() != null && anuncio.getProvincia().length() > 50)
+					"El modelo del vehiculo no puede ser mayor de 40 caracteres.");
+		if (anuncio.getProvincia() != null && anuncio.getProvincia().length() > 20)
 			throw new BadRequestException(
-					"La provincia donde se vende el coche no puede ser mayor de 50 caracteres.");
+					"La provincia donde se vende el vehiculo no puede ser mayor de 20 caracteres.");
 		
 		}
 
@@ -1320,6 +1329,15 @@ public class AnuncioResource {
 			@FormDataParam("descripcion") String descripcion,
 			@FormDataParam("image") InputStream image,
 			@FormDataParam("image") FormDataContentDisposition fileDisposition) {
+		Anuncio anuncio = new Anuncio();
+		anuncio.setTitulo(titulo);
+		anuncio.setMarca(marca);
+		anuncio.setMarca(modelo);
+		anuncio.setProvincia(provincia);
+		anuncio.setDescripcion(descripcion);
+		validateAnuncio(anuncio);
+		
+		
 		UUID uuid = writeAndConvertImage(image);
 
 		Connection conn = null;
@@ -1354,13 +1372,46 @@ public class AnuncioResource {
 			} catch (SQLException e) {
 			}
 		}
-		Anuncio anuncio = new Anuncio();
+		
 		anuncio.setFilename(uuid.toString() + ".png");
 		anuncio.setImageURL(app.getProperties().get("imgBaseURL")
 				+ anuncio.getFilename());
 
 		return anuncio;
 	}
+	private void validateAnuncio(Anuncio anuncio) {
+		if (anuncio.getTitulo() == null)
+			throw new BadRequestException(
+					"El titulo del anuncio no puede ser null.");
+		if (anuncio.getDescripcion() == null)
+			throw new BadRequestException(
+					"La descripcion del anuncio no puede ser null.");
+		if (anuncio.getMarca() == null)
+			throw new BadRequestException(
+					"La marca del vehiculo no puede ser null.");
+		if (anuncio.getModelo() == null)
+			throw new BadRequestException(
+					"El modelo del vehiculo no puede ser null.");
+		if (anuncio.getProvincia() == null)
+			throw new BadRequestException(
+					"La provincia donde se vende el vehiculo no puede ser null.");
+		if (anuncio.getTitulo().length() > 100)
+			throw new BadRequestException(
+					"El titulo del anuncio no puede ser mayor de 100 caracteres.");
+		if (anuncio.getDescripcion().length() > 2000)
+			throw new BadRequestException(
+					"La descripcion del anuncio no puede ser mayor de 500 caracteres.");
+		if (anuncio.getMarca().length() > 20)
+			throw new BadRequestException(
+					"La marca del vehiculo no puede ser mayor de 20 caracteres.");
+		if (anuncio.getModelo().length() > 40)
+			throw new BadRequestException(
+					"El modelo del vehiculo no puede ser mayor de 40 caracteres.");
+		if (anuncio.getProvincia().length() > 20)
+			throw new BadRequestException(
+					"La provincia donde se vende el vehiculo no puede ser mayor de 20 caracteres.");
+		
+		}
 
 	private UUID writeAndConvertImage(InputStream file) {
 		

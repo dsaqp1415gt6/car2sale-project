@@ -14,8 +14,8 @@ import edu.upc.eetac.dsa.dsaqp1415g6.api.MediaType;
 public class MensajeCollection {
 	@InjectLinks({
 		@InjectLink(resource = AnuncioResource.class, style = Style.ABSOLUTE, rel = "create-mensaje", title = "Create mensaje", type = MediaType.MENSAJES_API_MENSAJE),
-		@InjectLink(value = "/mensajes?before={before}", style = Style.ABSOLUTE, rel = "previous", title = "Previous mensajes", type = MediaType.MENSAJES_API_MENSAJE_COLLECTION, bindings = { @Binding(name = "before", value = "${instance.oldestTimestamp}") }),
-		@InjectLink(value = "/mensajes?after={after}", style = Style.ABSOLUTE, rel = "current", title = "Newest mensajes", type = MediaType.MENSAJES_API_MENSAJE_COLLECTION, bindings = { @Binding(name = "after", value = "${instance.newestTimestamp}") }) })
+		@InjectLink(value = "/mensajes?before={before}", style = Style.ABSOLUTE, rel = "before", title = "Previous mensajes", type = MediaType.MENSAJES_API_MENSAJE_COLLECTION, bindings = { @Binding(name = "before", value = "${instance.oldestTimestamp}") }),
+		@InjectLink(value = "/mensajes?after={after}", style = Style.ABSOLUTE, rel = "after", title = "Newest mensajes", type = MediaType.MENSAJES_API_MENSAJE_COLLECTION, bindings = { @Binding(name = "after", value = "${instance.newestTimestamp}") }) })
 	private List<Link> links;
 	public List<Link> getLinks() {
 		return links;

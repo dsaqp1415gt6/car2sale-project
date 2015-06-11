@@ -19,8 +19,8 @@ import edu.upc.eetac.dsa.dsaqp1415g6.api.MediaType;
 public class FavoritoCollection {
 	@InjectLinks({
 		@InjectLink(resource = FavoritoResource.class, style = Style.ABSOLUTE, rel = "create-favorito", title = "Create favorito", type = MediaType.FAVORITOS_API_FAVORITO),
-		@InjectLink(value = "/favoritos?before={before}", style = Style.ABSOLUTE, rel = "previous", title = "Previous favoritos", type = MediaType.FAVORITOS_API_FAVORITO_COLLECTION, bindings = { @Binding(name = "before", value = "${instance.oldestTimestamp}") }),
-		@InjectLink(value = "/favoritos?after={after}", style = Style.ABSOLUTE, rel = "current", title = "Newest favoritos", type = MediaType.FAVORITOS_API_FAVORITO_COLLECTION, bindings = { @Binding(name = "after", value = "${instance.newestTimestamp}") }) })
+		@InjectLink(value = "/favoritos?before={before}", style = Style.ABSOLUTE, rel = "before", title = "Previous favoritos", type = MediaType.FAVORITOS_API_FAVORITO_COLLECTION, bindings = { @Binding(name = "before", value = "${instance.oldestTimestamp}") }),
+		@InjectLink(value = "/favoritos?after={after}", style = Style.ABSOLUTE, rel = "after", title = "Newest favoritos", type = MediaType.FAVORITOS_API_FAVORITO_COLLECTION, bindings = { @Binding(name = "after", value = "${instance.newestTimestamp}") }) })
 	private List<Link> links;
 	
 	public List<Link> getLinks() {

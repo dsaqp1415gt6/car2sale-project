@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 
 import javax.ws.rs.Consumes;
@@ -26,11 +27,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Application;
 
-
-
-
-
-import edu.upc.eetac.dsa.dsaqp1415g6.api.model.Anuncio;
 import edu.upc.eetac.dsa.dsaqp1415g6.api.model.Favorito;
 import edu.upc.eetac.dsa.dsaqp1415g6.api.model.FavoritoCollection;
 
@@ -43,7 +39,7 @@ public class FavoritoResource {
 	private DataSource ds = DataSourceSPA.getInstance().getDataSource();
 	private String SeguirAnuncio = "replace into favoritos (username, idanuncio) values (?, ?);";
 	private String ListarAnunciosFavoritos = "select * from favoritos where username=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?"; 
-	private String ListarAnunciosFavoritos_last = "select * from favoritos where username=? and creation_timestamp > ? ORDER BY creation_timestamp DESC";
+	private String ListarAnunciosFavoritos_last = "select * from favoritos where username=? and creation_timestamp > ? ORDER BY creation_timestamp DESC limit 10";
 	private String DELETE_FAVORITO_QUERY = "delete from favoritos where idanuncio=?";
 	private String GET_FAVORITO_BY_ID_QUERY = "select * from favoritos where idanuncio=?";
 
@@ -54,6 +50,7 @@ public class FavoritoResource {
 	public FavoritoCollection getFavoritos(@QueryParam("length") int length, @QueryParam("before") long before, @QueryParam("after") long after) {
 			FavoritoCollection favoritos= new FavoritoCollection();
 			Connection conn = null;
+		
 				try {
 					conn = ds.getConnection();
 				} catch (SQLException e) {
@@ -78,14 +75,14 @@ public class FavoritoResource {
 							stmt.setString(1, security.getUserPrincipal().getName());
 						
 						}
-						else{
+						else
 							
 							stmt.setTimestamp(2, null);
 						    length = (length <= 0) ? 10 : length;
 						    stmt.setInt(3, length);
 						    stmt.setString(1, security.getUserPrincipal().getName());
 							
-						}
+						
 					}
 				
 					ResultSet rs = stmt.executeQuery();
@@ -192,7 +189,7 @@ private void validateUser(String idanuncio) {
 			stmt.setInt(1, Integer.valueOf(idanuncio));
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
-			
+				
 				favorito.setUsername(rs.getString("username"));
 				favorito.setIdanuncio(rs.getInt("idanuncio"));
 				favorito.setLast_modified(rs.getTimestamp("last_modified")
@@ -222,7 +219,7 @@ private void validateUser(String idanuncio) {
 @Consumes(MediaType.FAVORITOS_API_FAVORITO)
 public Favorito create (Favorito favorito) {
 	
-			
+	
 			Connection conn = null;
 			try {
 				conn = ds.getConnection();
@@ -233,10 +230,18 @@ public Favorito create (Favorito favorito) {
 
 			PreparedStatement stmt = null;
 			try {
-				stmt = conn.prepareStatement(SeguirAnuncio);
+				stmt = conn.prepareStatement(SeguirAnuncio, Statement.RETURN_GENERATED_KEYS);
 				stmt.setString(1, security.getUserPrincipal().getName());
 				stmt.setInt(2,favorito.getIdanuncio());
 				stmt.executeUpdate();
+				ResultSet rs = stmt.getGeneratedKeys();
+				if (rs.next()) {
+					int idanuncio = rs.getInt(1);
+					System.out.println(idanuncio);
+					favorito = getFavorito(Integer.toString(idanuncio));
+				} else {
+					// Something has failed...
+				}
 			} catch (SQLException e) {
 				throw new ServerErrorException(e.getMessage(),
 						Response.Status.INTERNAL_SERVER_ERROR);
@@ -254,7 +259,6 @@ public Favorito create (Favorito favorito) {
 		}
 		
 		
-
 		
 
 

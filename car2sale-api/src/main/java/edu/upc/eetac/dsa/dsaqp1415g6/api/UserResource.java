@@ -36,7 +36,6 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
-import edu.upc.eetac.dsa.dsaqp1415g6.api.model.Anuncio;
 import edu.upc.eetac.dsa.dsaqp1415g6.api.model.Roles;
 import edu.upc.eetac.dsa.dsaqp1415g6.api.model.User;
 
@@ -60,10 +59,14 @@ public class UserResource {
 			@FormDataParam("email") String email,
 			@FormDataParam("image") InputStream image,
 			@FormDataParam("image") FormDataContentDisposition fileDisposition) {
-		UUID uuid = writeAndConvertImage(image);
 		
-	
- 
+		
+		User user = new User();
+		user.setUsername(username);
+		user.setPassword(password);
+		user.setName(name);
+		user.setEmail(email);
+		validateUser(user);
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -76,19 +79,23 @@ public class UserResource {
 		PreparedStatement stmtInsertUserIntoUserRoles = null;
 		try {
 			stmtGetUsername = conn.prepareStatement(GET_USER_BY_USERNAME_QUERY);
+			
 			stmtGetUsername.setString(1, username);
- 
+			
 			ResultSet rs = stmtGetUsername.executeQuery();
 			if (rs.next())
 				throw new WebApplicationException(username
 						+ " already exists.", Status.CONFLICT);
 			rs.close();
- 
+			
 			conn.setAutoCommit(false);
+			 
 			stmtInsertUserIntoUsers = conn
 					.prepareStatement(INSERT_USER_INTO_USERS);
 			stmtInsertUserIntoUserRoles = conn
 					.prepareStatement(INSERT_USER_INTO_USER_ROLES);
+			UUID uuid = writeAndConvertImage(image);
+			user.setFilename(uuid.toString() + ".png");
 			stmtInsertUserIntoUsers.setString(1, uuid.toString());
 			stmtInsertUserIntoUsers.setString(2, username);
 			stmtInsertUserIntoUsers.setString(3, password);
@@ -106,8 +113,9 @@ public class UserResource {
 					conn.rollback();
 				} catch (SQLException e1) {
 				}
-			throw new ServerErrorException(e.getMessage(),
-					Response.Status.INTERNAL_SERVER_ERROR);
+		/*	throw new ServerErrorException(e.getMessage(),
+					Response.Status.INTERNAL_SERVER_ERROR);*/
+			
 		} finally {
 			try {
 				if (stmtGetUsername != null)
@@ -121,15 +129,24 @@ public class UserResource {
 			} catch (SQLException e) {
 			}
 		}
-		User user = new User();
-		user.setFilename(uuid.toString() + ".png");
+		
+		
 		user.setImageURL(app.getProperties().get("imgBaseURL")
 				+ user.getFilename());
 		user.setPassword(null);
 		return user;
 	}
  
-
+	private void validateUser(User user) {
+		if (user.getUsername() == null)
+			throw new BadRequestException("username cannot be null.");
+		if (user.getPassword() == null)
+			throw new BadRequestException("password cannot be null.");
+		if (user.getName() == null)
+			throw new BadRequestException("name cannot be null.");
+		if (user.getEmail() == null)
+			throw new BadRequestException("email cannot be null.");
+	}
  
 	@Path("/login")
 	@POST

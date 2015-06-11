@@ -1,16 +1,9 @@
 package edu.upc.eetac.dsa.dsaqp1415g6.api;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.sql.DataSource;
 import javax.ws.rs.Path;
 
-import java.util.UUID;
-import java.io.Console;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,12 +13,12 @@ import java.sql.Timestamp;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
+
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
+
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -36,17 +29,9 @@ import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import javax.imageio.ImageIO;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.Path;
-import javax.ws.rs.Consumes;
 
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import edu.upc.eetac.dsa.dsaqp1415g6.api.model.Anuncio;
+
 import edu.upc.eetac.dsa.dsaqp1415g6.api.model.Mensaje;
 import edu.upc.eetac.dsa.dsaqp1415g6.api.model.MensajeCollection;
 @Path("/mensajes")
@@ -55,7 +40,7 @@ public class MensajeResource {
 	private SecurityContext security;
 	private DataSource ds = DataSourceSPA.getInstance().getDataSource();
 	private String GET_MENSAJES_QUERY = "select * from mensajes where usuariorecibe=? and creation_timestamp < ifnull(?, now()) ORDER BY creation_timestamp desc limit ?";
-	private String GET_MENSAJES_QUERY_LAST = "select * from mensajes where usuariorecibe=? and creation_timestamp > ? ORDER BY creation_timestamp DESC";
+	private String GET_MENSAJES_QUERY_LAST = "select * from mensajes where usuariorecibe=? and creation_timestamp > ? ORDER BY creation_timestamp DESC limit 10";
 	private String GET_MENSAJE_BY_ID_QUERY = "SELECT * FROM mensajes WHERE idmensaje=?";
 	private String INSERT_MENSAJE_QUERY = "insert into mensajes (usuarioenvia, usuariorecibe, anuncio, mensaje) values (?, ?, ?, ?)";
 	
@@ -90,14 +75,14 @@ public class MensajeResource {
 					stmt.setString(1, security.getUserPrincipal().getName());
 				
 				}
-				else{
+				else
 					
 					stmt.setTimestamp(2, null);
 				    length = (length <= 0) ? 10 : length;
 				    stmt.setInt(3, length);
 				    stmt.setString(1,security.getUserPrincipal().getName());
 					
-				}
+				
 			}
 		
 			ResultSet rs = stmt.executeQuery();
@@ -138,6 +123,8 @@ public class MensajeResource {
 	 
 		return mensajes;
 	}
+
+
 	
 	@GET
 	@Path("/{idmensaje}")
@@ -194,6 +181,7 @@ public class MensajeResource {
 	@Consumes(MediaType.MENSAJES_API_MENSAJE)
 	@Produces(MediaType.MENSAJES_API_MENSAJE)
 	public Mensaje createMensaje(Mensaje mensaje) {
+		validateMensaje(mensaje);
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
@@ -206,8 +194,8 @@ public class MensajeResource {
 		try {
 			stmt = conn.prepareStatement(INSERT_MENSAJE_QUERY,
 					Statement.RETURN_GENERATED_KEYS);
-	 
-			stmt.setString(1, mensaje.getUsuarioenvia());
+			
+			stmt.setString(1, security.getUserPrincipal().getName());
 			stmt.setString(2, mensaje.getUsuariorecibe());
 			stmt.setInt(3, mensaje.getAnuncio());
 			stmt.setString(4, mensaje.getMensaje());
@@ -215,7 +203,7 @@ public class MensajeResource {
 			ResultSet rs = stmt.getGeneratedKeys();
 			if (rs.next()) {
 				int idmensaje = rs.getInt(1);
-	 
+				
 				mensaje = getMensaje(Integer.toString(idmensaje));
 			} else {
 				// Something has failed...
@@ -233,6 +221,16 @@ public class MensajeResource {
 		}
 	 
 		return mensaje;
+	}
+	private void validateMensaje(Mensaje mensaje) {
+		if (mensaje.getUsuariorecibe() == null)
+			throw new BadRequestException("El usuario que recibe el mensaje no puede ser null.");
+		if (mensaje.getMensaje() == null)
+			throw new BadRequestException("El mensaje no puede ser null.");
+		if (mensaje.getUsuariorecibe().length() > 20)
+			throw new BadRequestException("El usuario que recibe el mensaje no puede ser mayor de 20 caracteres.");
+		if (mensaje.getMensaje().length() > 500)
+			throw new BadRequestException("El mensaje no puede ser mayor de 500 caracteres.");
 	}
 	
 

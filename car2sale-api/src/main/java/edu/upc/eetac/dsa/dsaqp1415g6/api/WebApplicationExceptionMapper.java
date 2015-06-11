@@ -5,7 +5,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import edu.upc.eetac.dsa.dsaqp1415g6.api.model.AnuncioError;
-
+@Provider
 public class WebApplicationExceptionMapper implements
 ExceptionMapper<WebApplicationException> {
 @Override

@@ -31,7 +31,7 @@ create table anuncio (
 	modelo				varchar(40) not null,
 	km					int not null,
 	precio				int not null,
-	provincia			varchar(50) not null,
+	provincia			varchar(20) not null,
 	last_modified			timestamp default current_timestamp ON UPDATE CURRENT_TIMESTAMP,
 	creation_timestamp		datetime not null default current_timestamp,
 	
