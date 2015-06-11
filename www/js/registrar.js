@@ -25,6 +25,7 @@ $('form').submit(function(e){
         processData: false
 	})
 	.done(function (data, status, jqxhr) {
+
 		var response = $.parseJSON(jqxhr.responseText);
 		lastFilename = response.filename;
 		$('<div class="alert alert-danger"> <strong></strong> Registro ok!!  </div>').appendTo($("#result_registro"));
@@ -32,7 +33,7 @@ $('form').submit(function(e){
 		$('form')[0].reset();
 	})
     .fail(function (jqXHR, textStatus) {
-    	alert("Error al registrarse");
+    	alert("Lo sentimos, Usuario ya registrado");
 		console.log(textStatus);
 	});
 });
