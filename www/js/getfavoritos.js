@@ -27,7 +27,6 @@ function FavoritoCollection(favoritoCollection, respuesta, favoritos){
 	}*/
 	
 	this.links = buildLinks(favoritos.links);
-	console.log (this.links)
 	var instance = this;
 	this.getLink = function(rel){
 		return this.links[rel];
@@ -205,7 +204,6 @@ function GetAnuncio(i) {
 	});
 }
 function DeleteFavorito(id) {
-	console.log (id);
 	var url = API_BASE_URL_FAVORITOS+ '/' + id;
 
 	$
@@ -234,12 +232,11 @@ function DeleteFavorito(id) {
 					
 }
 $("#cerrar").click(function(e) {
-	console.log("estamos cerrando");
     e.preventDefault();
 	  if($.removeCookie('password')) {
 			if($.removeCookie('username')) {
 			
-			$('#logout').html('<FONT color="#F5F920"><strong>La sesion se ha cerrdo con exito! Actualizando pagina principal ......</strong></FONT>');
+			$('#logout').html('<FONT color="#F5F920"><strong>La sesion se ha cerrado con exito! Actualizando pagina principal ......</strong></FONT>');
 			window.setTimeout('window.location.replace("index.html")', 2000); // refresh after 2 sec
 			}
 	  }

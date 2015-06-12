@@ -170,7 +170,7 @@ $("#cerrar").click(function(e) {
 	  if($.removeCookie('password')) {
 			if($.removeCookie('username')) {
 			
-			$('#logout').html('<FONT color="#F5F920"><strong>La sesion se ha cerrdo con exito! Actualizando pagina principal ......</strong></FONT>');
+			$('#logout').html('<FONT color="#F5F920"><strong>La sesion se ha cerrado con exito! Actualizando pagina principal ......</strong></FONT>');
 			window.setTimeout('window.location.replace("index.html")', 2000); // refresh after 2 sec
 			}
 	  }

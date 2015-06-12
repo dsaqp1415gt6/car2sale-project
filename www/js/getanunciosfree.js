@@ -352,7 +352,6 @@ $("#buscar").click(function(e) {
 		getAnuncios(url);
 	}else if ((selmarca != 'Marcas') && (selmodelo!='Modelos') && (selprecio!='precio hasta')&& (selkm!='km hasta')){
 		var url = API_BASE_URL+ '/' +selmarca+ '/' +selmodelo+ '/' +precio[0]+ '/' +selkm;
-		console.log (url);
 		getAnunciosCollection(url);
 	}else if ((selmarca != 'Marcas') && (selmodelo!='Modelos') && (selprecio!='precio hasta') && (selprovincia!='provincias')){
 		var url = API_BASE_URL_PRECIOS+ '/' +selmarca+ '/' +selmodelo+ '/' +precio[0]+ '/' +selprovincia;
@@ -362,7 +361,6 @@ $("#buscar").click(function(e) {
 		getAnuncios(url)
 	}else if ((selmarca != 'Marcas') && (selmodelo!='Modelos') && (selprecio!='precio hasta')){
 		var url = API_BASE_URL_PRECIOS+ '/' +selmarca+ '/' +selmodelo+ '/' +precio[0];
-		console.log ("dentro");
 		getAnunciosCollection(url)
 		
 	}else if ((selmarca != 'Marcas') && (selmodelo!='Modelos') && (selkm!='km hasta')){
@@ -374,7 +372,6 @@ $("#buscar").click(function(e) {
 		getAnuncios(url);
 	}else{
 		var url = API_BASE_URL+ '/' +selmarca+ '/' +selmodelo;
-		console.log (url);
 		getAnunciosCollection(url);
 	}
 	
@@ -388,6 +385,13 @@ function Anuncios(anuncioCollection, respuesta, anuncios){
 	
 	this.toHTML = function(){
 		var html = '';
+		if ((respuesta.newestTimestamp=='0') || (respuesta.oldestTimestamp=='0')){
+			html = html.concat('<strong> Ops!! No hay resultados en la busqueda</strong>');
+			html = html.concat('<br>');
+			html = html.concat('<br>');
+			html = html.concat('<a class="boton azul" onClick="getPrincipio()" id="next" align=right>Volver al principio</a>');
+		}
+		else{
 		$.each(this.anuncios, function(i, v) {
 			var anuncio = v;
 			var idanuncio = anuncio.idanuncio;
@@ -406,6 +410,7 @@ function Anuncios(anuncioCollection, respuesta, anuncios){
 			html = html.concat('<br>');
 			html = html.concat('<br>');
 		});
+		}
 			
 
  		return html;	
@@ -458,7 +463,6 @@ function GetRoles() {
 		crossDomain : true,
 		dataType : 'json',
 	}).done(function(data, status, jqxhr) {
-					console.log(data);
 					var rolename= data.rolename;
 					setCookie('rolename', rolename,1)
 						
@@ -490,8 +494,6 @@ function Login(){
 		data: data,
 	}).done(function(data, status, jqxhr) {
 				var info= data;
-				console.log(info);
-				console.log(info.username);
 				if (info.loginSuccessful == true){
 					
 				window.location.replace("logeado.html");
@@ -528,10 +530,10 @@ function getCookie(cname) {
     var ca = document.cookie.split(';');
     for(var i=0; i<ca.length; i++) {
         var c = ca[i];
-		console.log (ca[i]);
         while (c.charAt(0)==' ') c = c.substring(1);{
         if (c.indexOf(name) == 0) return c.substring(name.length,c.length);{}}
     }
     return "";
 } 
+
 

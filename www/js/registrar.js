@@ -7,7 +7,6 @@ $('form').submit(function(e){
 	$('progress').toggle();
 
 	var formData = new FormData($('form')[0]);
-	console.log (formData);
 	$.ajax({
 		url: URL,
 		type: 'POST',

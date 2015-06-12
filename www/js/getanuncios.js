@@ -385,6 +385,14 @@ function Anuncios(anuncioCollection, respuesta, anuncios){
 	
 	this.toHTML = function(){
 		var html = '';
+		
+		if ((respuesta.newestTimestamp=='0') || (respuesta.oldestTimestamp=='0')){
+			html = html.concat('<strong> Ops!! No hay resultados en la busqueda</strong>');
+			html = html.concat('<br>');
+			html = html.concat('<br>');
+			html = html.concat('<a class="boton azul" onClick="getPrincipio()" id="next" align=right>Volver al principio</a>');
+		}
+		else{
 		$.each(this.anuncios, function(i, v) {
 			var anuncio = v;
 			var idanuncio = anuncio.idanuncio;
@@ -403,7 +411,7 @@ function Anuncios(anuncioCollection, respuesta, anuncios){
 			html = html.concat('<br>');
 			html = html.concat('<br>');
 		});
-			
+		}
 
  		return html;	
 	}
@@ -442,7 +450,6 @@ function getCookie(cname) {
     var ca = document.cookie.split(';');
     for(var i=0; i<ca.length; i++) {
         var c = ca[i];
-		console.log (ca[i]);
         while (c.charAt(0)==' ') c = c.substring(1);{
         if (c.indexOf(name) == 0) return c.substring(name.length,c.length);{}}
     }
@@ -454,20 +461,10 @@ $("#cerrar").click(function(e) {
 	  if($.removeCookie('password')) {
 			if($.removeCookie('username')) {
 			
-			$('#logout').html('<FONT color="#F5F920"><strong>La sesion se ha cerrdo con exito! Actualizando pagina principal ......</strong></FONT>');
+			$('#logout').html('<FONT color="#F5F920"><strong>La sesion se ha cerrado con exito! Actualizando pagina principal ......</strong></FONT>');
 			window.setTimeout('window.location.replace("index.html")', 2000); // refresh after 2 sec
 			}
 	  }
  });
- $("#cerrar").click(function(e) {
-	console.log("estamos cerrando");
-    e.preventDefault();
-	  if($.removeCookie('password')) {
-			if($.removeCookie('username')) {
-			
-			$('#logout').html('<FONT color="#F5F920"><strong>La sesion se ha cerrdo con exito! Actualizando pagina principal ......</strong></FONT>');
-			window.setTimeout('window.location.replace("index.html")', 2000); // refresh after 2 sec
-			}
-	  }
- });
+
 
