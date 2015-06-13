@@ -1245,14 +1245,8 @@ public class AnuncioResource {
 			@FormDataParam("descripcion") String descripcion,
 			@FormDataParam("image") InputStream image,
 			@FormDataParam("image") FormDataContentDisposition fileDisposition) {
-		Anuncio anuncio = new Anuncio();
-		validateUser(idanuncio);
-		anuncio.setTitulo(titulo);
-		anuncio.setMarca(marca);
-		anuncio.setMarca(modelo);
-		anuncio.setProvincia(provincia);
-		anuncio.setDescripcion(descripcion);
-		validateUpdateAnuncio(anuncio);
+		
+		
 		UUID uuid = writeAndConvertImage(image);
 		Connection conn = null;
 		try {
@@ -1291,31 +1285,14 @@ public class AnuncioResource {
 			} catch (SQLException e) {
 			}
 		}
-
+		Anuncio anuncio = new Anuncio();
 		anuncio.setFilename(uuid.toString() + ".png");
 		anuncio.setImageURL(app.getProperties().get("imgBaseURL")
 				+ anuncio.getFilename());
 	 
 		return anuncio;
 		}
-	private void validateUpdateAnuncio(Anuncio anuncio) {
-		if (anuncio.getTitulo() != null && anuncio.getTitulo().length() > 100)
-			throw new BadRequestException(
-					"El titulo del anuncio no puede ser mayor de 100 caracteres.");
-		if (anuncio.getDescripcion() != null && anuncio.getDescripcion().length() > 2000)
-			throw new BadRequestException(
-					"La descripcion del anuncio no puede ser mayor de 2000 caracteres.");
-		if (anuncio.getMarca() != null && anuncio.getMarca().length() > 20)
-			throw new BadRequestException(
-					"La marca del vehiculo no puede ser mayor de 20 caracteres.");
-		if (anuncio.getModelo() != null && anuncio.getModelo().length() > 40)
-			throw new BadRequestException(
-					"El modelo del vehiculo no puede ser mayor de 40 caracteres.");
-		if (anuncio.getProvincia() != null && anuncio.getProvincia().length() > 20)
-			throw new BadRequestException(
-					"La provincia donde se vende el vehiculo no puede ser mayor de 20 caracteres.");
-		
-		}
+	
 
 
 	@POST
@@ -1329,14 +1306,6 @@ public class AnuncioResource {
 			@FormDataParam("descripcion") String descripcion,
 			@FormDataParam("image") InputStream image,
 			@FormDataParam("image") FormDataContentDisposition fileDisposition) {
-		Anuncio anuncio = new Anuncio();
-		anuncio.setTitulo(titulo);
-		anuncio.setMarca(marca);
-		anuncio.setMarca(modelo);
-		anuncio.setProvincia(provincia);
-		anuncio.setDescripcion(descripcion);
-		validateAnuncio(anuncio);
-		
 		
 		UUID uuid = writeAndConvertImage(image);
 
@@ -1372,46 +1341,14 @@ public class AnuncioResource {
 			} catch (SQLException e) {
 			}
 		}
-		
+		Anuncio anuncio = new Anuncio();
 		anuncio.setFilename(uuid.toString() + ".png");
 		anuncio.setImageURL(app.getProperties().get("imgBaseURL")
 				+ anuncio.getFilename());
 
 		return anuncio;
 	}
-	private void validateAnuncio(Anuncio anuncio) {
-		if (anuncio.getTitulo() == null)
-			throw new BadRequestException(
-					"El titulo del anuncio no puede ser null.");
-		if (anuncio.getDescripcion() == null)
-			throw new BadRequestException(
-					"La descripcion del anuncio no puede ser null.");
-		if (anuncio.getMarca() == null)
-			throw new BadRequestException(
-					"La marca del vehiculo no puede ser null.");
-		if (anuncio.getModelo() == null)
-			throw new BadRequestException(
-					"El modelo del vehiculo no puede ser null.");
-		if (anuncio.getProvincia() == null)
-			throw new BadRequestException(
-					"La provincia donde se vende el vehiculo no puede ser null.");
-		if (anuncio.getTitulo().length() > 100)
-			throw new BadRequestException(
-					"El titulo del anuncio no puede ser mayor de 100 caracteres.");
-		if (anuncio.getDescripcion().length() > 2000)
-			throw new BadRequestException(
-					"La descripcion del anuncio no puede ser mayor de 500 caracteres.");
-		if (anuncio.getMarca().length() > 20)
-			throw new BadRequestException(
-					"La marca del vehiculo no puede ser mayor de 20 caracteres.");
-		if (anuncio.getModelo().length() > 40)
-			throw new BadRequestException(
-					"El modelo del vehiculo no puede ser mayor de 40 caracteres.");
-		if (anuncio.getProvincia().length() > 20)
-			throw new BadRequestException(
-					"La provincia donde se vende el vehiculo no puede ser mayor de 20 caracteres.");
-		
-		}
+	
 
 	private UUID writeAndConvertImage(InputStream file) {
 		

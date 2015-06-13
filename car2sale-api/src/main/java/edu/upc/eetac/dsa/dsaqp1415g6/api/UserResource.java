@@ -60,13 +60,7 @@ public class UserResource {
 			@FormDataParam("image") InputStream image,
 			@FormDataParam("image") FormDataContentDisposition fileDisposition) {
 		
-		
 		User user = new User();
-		user.setUsername(username);
-		user.setPassword(password);
-		user.setName(name);
-		user.setEmail(email);
-		validateUser(user);
 		Connection conn = null;
 		try {
 			conn = ds.getConnection();
