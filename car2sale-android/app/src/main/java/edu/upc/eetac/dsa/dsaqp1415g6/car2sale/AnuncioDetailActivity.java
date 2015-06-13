@@ -10,8 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -98,11 +96,7 @@ public class AnuncioDetailActivity extends Activity {
             pd.show();
         }
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_car2_sale_post, menu);
-        return true;
-    }
+
+
 
 }

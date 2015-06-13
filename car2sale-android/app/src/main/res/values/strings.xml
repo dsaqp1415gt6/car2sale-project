@@ -2,7 +2,18 @@
     <string name="app_name">Car2Sale</string>
 
     <string name="hello_world">Hello world!</string>
-
+    <string name="filtrar_marcas">Filtrar Marcas</string>
+    <string name="filtrar_km">Filtrar Kilometros</string>
+    <string name="filtrar_precios">Filtrar Precios</string>
+    <string name="mis_anuncios">Mis Anuncios</string>
+    <string name="favoritos">Favoritos</string>
+    <string name="mensajes">Mensajes</string>
+    <string name="postfavoritos">Añadir a Favoritos</string>
+    <string name="postmensaje">Contactar</string>
+    <string name="login_l_username">Usuario</string>
+    <string name="login_l_password">Contraseña</string>
+    <string name="login_l_signin">Entrar</string>
+    
 
 
 

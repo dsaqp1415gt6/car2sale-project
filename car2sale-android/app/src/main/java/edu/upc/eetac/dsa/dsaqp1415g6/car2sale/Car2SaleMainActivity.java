@@ -132,12 +132,54 @@ public class Car2SaleMainActivity extends ListActivity {
         getMenuInflater().inflate(R.menu.menu_car_2_sale_main, menu);
         return true;
     }
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        Anuncio anuncio = anunciosList.get(position);
+        Log.d(TAG, anuncio.getLinks().get("self").getTarget());
 
+        Intent intent = new Intent(this, AnuncioDetailActivity.class);
+        intent.putExtra("url", anuncio.getLinks().get("self").getTarget());
+        startActivity(intent);
+    }
 
     private void addAnuncios(AnuncioCollection anuncios) {
         anunciosList.addAll(anuncios.getAnuncios());
         adapter.notifyDataSetChanged();
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.FiltrarMarcas:
+                Intent intentMarca = new Intent(this, FiltrarMarcasActivity.class);
+                startActivity(intentMarca);
+                return true;
+            case R.id.FiltrarPrecio:
 
+                return true;
+
+            case R.id.FiltrarKm:
+
+                return true;
+
+            case R.id.MisAnuncios:
+                Intent MisAnuncios = new Intent(this, MisAnunciosDetailActivity.class);
+                startActivity(MisAnuncios);
+                return true;
+
+            case R.id.Favoritos:
+              ;
+                return true;
+
+            case R.id.Mensajes:
+
+                return true;
+
+
+
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 }

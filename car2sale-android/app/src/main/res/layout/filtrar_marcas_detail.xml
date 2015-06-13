@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:id="@+id/tvJavi">
+
+
+        <!-- Header starts -->
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Button"
+            android:id="@+id/button" android:layout_gravity="center"
+            android:visibility="invisible"/>
+        <ImageView
+            android:src="@drawable/bmw"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetailBMW"
+            android:layout_gravity="center"
+            android:padding="15dp"/>
+
+        <ImageView
+            android:src="@drawable/ferrari"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetailFerrari"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/tvDetailBMW"
+            android:layout_toEndOf="@+id/tvDetailBMW" />
+
+        <ImageView
+            android:src="@drawable/ford"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetailFord"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/tvDetailFerrari"
+            android:layout_toEndOf="@+id/tvDetailFerrari" />
+
+        <ImageView
+        android:src="@drawable/mazda"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:id="@+id/tvDetailMazda"
+        android:layout_gravity="center"
+        android:padding="15dp"
+        android:layout_below="@+id/tvDetailBMW"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+        <ImageView
+            android:src="@drawable/nissan"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetailNissan"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_below="@+id/tvDetailBMW"
+            android:layout_toRightOf="@+id/tvDetailBMW"
+            android:layout_toEndOf="@+id/tvDetailBMW" />
+
+        <ImageView
+            android:src="@drawable/opel"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetailOpel"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_below="@+id/tvDetailFerrari"
+            android:layout_toRightOf="@+id/tvDetailFerrari"
+            android:layout_toEndOf="@+id/tvDetailFerrari" />
+
+        <ImageView
+            android:src="@drawable/peugeot"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetailPeugeot"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_below="@+id/tvDetailMazda"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <ImageView
+            android:src="@drawable/renault"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetailRenault"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_alignTop="@+id/tvDetailPeugeot"
+            android:layout_toRightOf="@+id/tvDetailPeugeot"
+            android:layout_toEndOf="@+id/tvDetailPeugeot" />
+
+        <ImageView
+            android:src="@drawable/seat"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetailSeat"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_below="@+id/tvDetailOpel"
+            android:layout_alignLeft="@+id/tvDetailFord"
+            android:layout_alignStart="@+id/tvDetailFord" />
+
+        <ImageView
+            android:src="@drawable/porsche"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetailPorsche"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_below="@+id/tvDetailPeugeot"
+            android:layout_alignRight="@+id/tvDetailBMW"
+            android:layout_alignEnd="@+id/tvDetailBMW" />
+
+        <ImageView
+            android:src="@drawable/lamborghini"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetailLamborghini"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_below="@+id/tvDetailPeugeot"
+            android:layout_toRightOf="@+id/tvDetailPeugeot"
+            android:layout_toEndOf="@+id/tvDetailPeugeot" />
+
+        <ImageView
+            android:src="@drawable/volkswagen"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetailVolkswagen"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_below="@+id/tvDetailRenault"
+            android:layout_toRightOf="@+id/tvDetailRenault"
+            android:layout_toEndOf="@+id/tvDetailRenault" />
+
+
+
+    </RelativeLayout>
+
+</ScrollView>

@@ -92,6 +92,7 @@ public class Car2SaleAPI {
         }
 
     }
+
     public AnuncioCollection getAnuncios() throws AppException {
 
         Log.d(TAG, "getAnuncios()");
@@ -159,6 +160,76 @@ public class Car2SaleAPI {
 
         return anuncios;
     }
+
+    public AnuncioCollection getMarca(String Marca) throws AppException {
+        AnuncioCollection anuncios = new AnuncioCollection();
+        marca= Marca;
+
+        HttpURLConnection urlConnection = null;
+        try {
+            String preURL = rootAPI.getLinks().get("collection").getTarget();
+            String URL = preURL + "/marcas/" + Marca;
+            System.out.println(URL);
+            urlConnection = (HttpURLConnection) new URL(URL).openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setDoInput(true);
+            urlConnection.connect();
+            System.out.println("hemos conectado");
+        } catch (IOException e) {
+            throw new AppException(
+                    "Can't connect to Car2Sale API Web Service");
+        }
+        BufferedReader reader;
+
+        try {
+            reader = new BufferedReader(new InputStreamReader(
+                    urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+
+            JSONObject jsonObject = new JSONObject(sb.toString());
+
+            JSONArray jsonLinks = jsonObject.getJSONArray("links");
+
+            parseLinks(jsonLinks, anuncios.getLinks());
+
+            anuncios.setNewestTimestamp(jsonObject.getLong("newestTimestamp"));
+            anuncios.setOldestTimestamp(jsonObject.getLong("oldestTimestamp"));
+            JSONArray jsonAnuncios = jsonObject.getJSONArray("anuncios");
+
+            for (int i = 0; i < jsonAnuncios.length(); i++) {
+                Anuncio anuncio = new Anuncio();
+                JSONObject jsonAnuncio = jsonAnuncios.getJSONObject(i);
+                anuncio.setIdanuncio(jsonAnuncio.getString("idanuncio"));
+                anuncio.setContador(jsonAnuncio.getString("contador"));
+                anuncio.setTitulo(jsonAnuncio.getString("titulo"));
+                anuncio.setDescripcion(jsonAnuncio.getString("descripcion"));
+                anuncio.setMarca(jsonAnuncio.getString("marca"));
+                anuncio.setModelo(jsonAnuncio.getString("modelo"));
+                anuncio.setKm(jsonAnuncio.getString("km"));
+                anuncio.setPrecio(jsonAnuncio.getString("precio"));
+                anuncio.setProvincia(jsonAnuncio.getString("provincia"));
+                anuncio.setLast_modified(jsonAnuncio.getLong("last_modified"));
+                anuncio.setCreation_timestamp(jsonAnuncio.getLong("creation_timestamp"));
+                jsonLinks = jsonAnuncio.getJSONArray("links");
+                parseLinks(jsonLinks, anuncio.getLinks());
+                anuncios.getAnuncios().add(anuncio);
+            }
+        } catch (IOException e) {
+            throw new AppException(
+                    "Can't get response from Car2Sale API Web Service");
+        } catch (JSONException e) {
+            throw new AppException("Error parsing Car2Sale Root API");
+        }
+
+        return anuncios;
+
+
+    }
+   
     public Anuncio getAnuncio(String urlanuncio) throws AppException {
         Anuncio anuncio = new Anuncio();
 
@@ -208,6 +279,78 @@ public class Car2SaleAPI {
 
         return anuncio;
     }
+
+    public Boolean checkLogin(String username, String password) throws AppException {
+        Log.d(TAG, "checkLogin()");
+        Boolean loginOK = false;
+        User user = new User();
+        user.setUsername(username);
+        user.setUserpass(password);
+
+
+        HttpURLConnection urlConnection = null;
+        try {
+            JSONObject jsonUser = createJsonUser(user);
+            String preURL = rootAPI.getLinks().get("login").getTarget();
+            String URL = preURL;
+            //    int code = urlConnection.getResponseCode();
+            System.out.println(URL);
+            urlConnection = (HttpURLConnection) new URL(URL).openConnection();
+            urlConnection.setRequestProperty("Accept",
+                    MediaType.ANUNCIOS_API_USER);
+            urlConnection.setRequestProperty("Content-Type",
+                    MediaType.ANUNCIOS_API_USER);
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
+            urlConnection.connect();
+
+            PrintWriter writer = new PrintWriter(
+                    urlConnection.getOutputStream());
+            writer.println(jsonUser.toString());
+            writer.close();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            //System.out.println("2");
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            jsonUser = new JSONObject(sb.toString());
+
+
+            user.setLoginSuccessful(jsonUser.getBoolean("loginSuccessful"));
+            loginOK = user.isLoginSuccessful();
+            //  System.out.println("3");
+            //JSONArray jsonLinks = jsonUser.getJSONArray("links");
+            //parseLinks(jsonLinks, user.getLinks());
+        } catch (JSONException e) {
+            Log.e(TAG, e.getMessage(), e);
+            throw new AppException("Error parsing response");
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
+            throw new AppException("Error getting response");
+        } finally {
+            if (urlConnection != null)
+                urlConnection.disconnect();
+        }
+        //  System.out.println("4");
+        return loginOK;
+
+    }
+    // Crear JSON de un Usuario
+    private JSONObject createJsonUser(User user) throws JSONException {
+        JSONObject jsonUser = new JSONObject();
+        jsonUser.put("username", user.getUsername());
+        jsonUser.put("password", user.getUserpass());
+
+
+//System.out.println(user.getUsername());
+        //      System.out.println(jsonUser);
+        return jsonUser;
+
+    }
     private void parseLinks(JSONArray jsonLinks, Map<String, Link> map)
             throws AppException, JSONException {
         for (int i = 0; i < jsonLinks.length(); i++) {
@@ -224,5 +367,8 @@ public class Car2SaleAPI {
                 map.put(s, link);
         }
     }
+
+
+
 
 }

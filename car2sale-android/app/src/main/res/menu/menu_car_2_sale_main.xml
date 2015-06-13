@@ -1,7 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".Car2SaleMainActivity">
-
+    <item android:id="@+id/FiltrarMarcas" android:title="@string/filtrar_marcas"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/FiltrarKm" android:title="@string/filtrar_km"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/FiltrarPrecio" android:title="@string/filtrar_precios"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/MisAnuncios" android:title="@string/mis_anuncios"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/Favoritos" android:title="@string/favoritos"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/Mensajes" android:title="@string/mensajes"
+        android:orderInCategory="100" app:showAsAction="never" />
 
 
 

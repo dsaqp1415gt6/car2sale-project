@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true"
+    android:background="@drawable/fondo">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:id="@+id/car2sale">
+
+        <!-- Header starts -->
+
+        <ImageView
+            android:src="@drawable/car2sale_logo"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:id="@+id/tvDetaillogo"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_marginBottom="381dp"
+            android:layout_alignBottom="@+id/linearLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+
+        <!-- Header ends -->
+        <!-- Login form -->
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="25dip"
+            android:id="@+id/linearLayout"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="130dp">
+
+            <ImageView
+                android:src="@drawable/usuario"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:id="@+id/tvDetailusuario"
+                android:padding="15dp"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dip" />
+
+            <EditText
+                android:id="@+id/etUsername"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="60dip"
+                android:layout_marginTop="5dip"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textColor="#fffeffef"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:src="@drawable/password"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:id="@+id/tvDetailcontraseña"
+                android:padding="15dp"
+                android:layout_below="@+id/tvDetailusuario"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dip" />
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dip"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:textColor="#fffeffef"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/bLogin"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dip"
+                android:onClick="signIn"
+                android:text="@string/login_l_signin"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</ScrollView>
