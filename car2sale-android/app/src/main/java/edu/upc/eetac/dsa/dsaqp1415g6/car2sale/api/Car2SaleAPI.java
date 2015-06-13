@@ -159,7 +159,55 @@ public class Car2SaleAPI {
 
         return anuncios;
     }
+    public Anuncio getAnuncio(String urlanuncio) throws AppException {
+        Anuncio anuncio = new Anuncio();
 
+
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(urlanuncio);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setDoInput(true);
+            urlConnection.connect();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            JSONObject jsonAnuncio = new JSONObject(sb.toString());
+            anuncio.setIdanuncio(jsonAnuncio.getString("idanuncio"));
+            anun= anuncio.getIdanuncio();
+            anuncio.setContador(jsonAnuncio.getString("contador"));
+            usuariorecibe= jsonAnuncio.getString("username");
+
+            anuncio.setTitulo(jsonAnuncio.getString("titulo"));
+            anuncio.setDescripcion(jsonAnuncio.getString("descripcion"));
+            anuncio.setMarca(jsonAnuncio.getString("marca"));
+            anuncio.setModelo(jsonAnuncio.getString("modelo"));
+            anuncio.setKm(jsonAnuncio.getString("km"));
+            anuncio.setPrecio(jsonAnuncio.getString("precio"));
+            anuncio.setProvincia(jsonAnuncio.getString("provincia"));
+            anuncio.setLast_modified(jsonAnuncio.getLong("last_modified"));
+            anuncio.setCreation_timestamp(jsonAnuncio.getLong("creation_timestamp"));
+            JSONArray jsonLinks = jsonAnuncio.getJSONArray("links");
+            parseLinks(jsonLinks, anuncio.getLinks());
+
+        } catch (MalformedURLException e) {
+            Log.e(TAG, e.getMessage(), e);
+            throw new AppException("Bad sting url");
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
+            throw new AppException("Exception when getting the sting");
+        } catch (JSONException e) {
+            Log.e(TAG, e.getMessage(), e);
+            throw new AppException("Exception parsing response");
+        }
+
+        return anuncio;
+    }
     private void parseLinks(JSONArray jsonLinks, Map<String, Link> map)
             throws AppException, JSONException {
         for (int i = 0; i < jsonLinks.length(); i++) {
