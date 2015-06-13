@@ -1,4 +1,4 @@
-var API_BASE_URL = 'http://localhost:8080/car2sale-api/anuncios';
+var API_BASE_URL = 'http://www.tgrupo6.dsa:8080/car2sale-api/anuncios';
 var lastFilename;
 
 $(document).ready(function(){

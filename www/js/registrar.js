@@ -1,4 +1,4 @@
-var URL = 'http://localhost:8080/car2sale-api/users';
+var URL = 'http://www.tgrupo6.dsa:8080/car2sale-api/users';
 var lastFilename;
 var username = getCookie('username');
 

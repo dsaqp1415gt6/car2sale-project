@@ -1,6 +1,6 @@
-var API_BASE_URL = 'http://localhost:8080/car2sale-api/mensajes';
-var API_BASE_URL_USERS = 'http://localhost:8080/car2sale-api/users';
-var URL = 'http://localhost:8080/car2sale-api/anuncios';
+var API_BASE_URL = 'http://www.tgrupo6.dsa:8080/car2sale-api/mensajes';
+var API_BASE_URL_USERS = 'http://www.tgrupo6.dsa:8080/car2sale-api/users';
+var URL = 'http://www.tgrupo6.dsa:8080/car2sale-api/anuncios';
 var lastFilename;
 var username = getCookie('username');
 var password = getCookie('password');

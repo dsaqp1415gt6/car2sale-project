@@ -1,7 +1,7 @@
-var API_BASE_URL = 'http://localhost:8080/car2sale-api/anuncios';
-var API_BASE_URL_LOGIN = 'http://localhost:8080/car2sale-api';
-var API_BASE_URL_PRECIOS = 'http://localhost:8080/car2sale-api/anuncios/precios'
-var API_BASE_URL_PROVINCIAS = 'http://localhost:8080/car2sale-api/anuncios/provincias'
+var API_BASE_URL = 'http://www.tgrupo6.dsa:8080/car2sale-api/anuncios';
+var API_BASE_URL_LOGIN = 'http://www.tgrupo6.dsa:8080/car2sale-api';
+var API_BASE_URL_PRECIOS = 'http://www.tgrupo6.dsa:8080/car2sale-api/anuncios/precios'
+var API_BASE_URL_PROVINCIAS = 'http://www.tgrupo6.dsa:8080/car2sale-api/anuncios/provincias'
 var lastFilename;
 
 

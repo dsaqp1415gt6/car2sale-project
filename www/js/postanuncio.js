@@ -1,4 +1,4 @@
-var URL = 'http://localhost:8080/car2sale-api/anuncios';
+var URL = 'http://www.tgrupo6.dsa:8080/car2sale-api/anuncios';
 var lastFilename;
 var username = getCookie('username');
 var password = getCookie('password');
