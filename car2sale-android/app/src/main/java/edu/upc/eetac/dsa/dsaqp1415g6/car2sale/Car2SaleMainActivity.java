@@ -170,8 +170,10 @@ public class Car2SaleMainActivity extends ListActivity {
                 return true;
 
             case R.id.Favoritos:
-              ;
+                Intent Favoritos = new Intent(this, FavoritosDetailActivity.class);
+                startActivity(Favoritos);
                 return true;
+
 
             case R.id.Mensajes:
 

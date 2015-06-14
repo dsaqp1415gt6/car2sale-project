@@ -434,6 +434,68 @@ public class Car2SaleAPI {
 
 
     }
+    public AnuncioCollection getMisFavoritos() throws AppException {
+        FavoritoCollection favoritos = new FavoritoCollection();
+        AnuncioCollection anuncios = new AnuncioCollection();
+
+        HttpURLConnection urlConnection = null;
+        try {
+            String preURL = rootAPI.getLinks().get("favoritos").getTarget();
+            u= preURL;
+            String URL = preURL;
+            System.out.println(URL);
+            urlConnection = (HttpURLConnection) new URL(URL).openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setDoInput(true);
+            urlConnection.connect();
+            System.out.println("hemos conectado");
+        } catch (IOException e) {
+            throw new AppException(
+                    "Can't connect to Car2Sale API Web Service");
+        }
+        BufferedReader reader;
+
+        try {
+            reader = new BufferedReader(new InputStreamReader(
+                    urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+
+            JSONObject jsonObject = new JSONObject(sb.toString());
+
+            JSONArray jsonLinks = jsonObject.getJSONArray("links");
+
+            parseLinks(jsonLinks, favoritos.getLinks());
+
+            favoritos.setNewestTimestamp(jsonObject.getLong("newestTimestamp"));
+            favoritos.setOldestTimestamp(jsonObject.getLong("oldestTimestamp"));
+            JSONArray jsonFavoritos = jsonObject.getJSONArray("favoritos");
+            for (int i = 0; i < jsonFavoritos.length(); i++) {
+                Favorito favorito = new Favorito();
+                JSONObject jsonFavorito = jsonFavoritos.getJSONObject(i);
+                favorito.setIdanuncio(jsonFavorito.getString("idanuncio"));
+                String id= favorito.getIdanuncio();
+                String[] uf = u.split("/");
+                String url= uf[0]+"/"+uf[1]+"/"+uf[2]+"/"+uf[3]+"/anuncios/" +id;
+                Anuncio anuncio = new Anuncio();
+                anuncio = getAnuncio(url);
+                anuncios.getAnuncios().add(anuncio);
+
+            }
+        } catch (IOException e) {
+            throw new AppException(
+                    "Can't get response from Car2Sale API Web Service");
+        } catch (JSONException e) {
+            throw new AppException("Error parsing Car2Sale Root API");
+        }
+
+        return anuncios;
+
+
+    }
 
     public Anuncio getAnuncio(String urlanuncio) throws AppException {
         Anuncio anuncio = new Anuncio();

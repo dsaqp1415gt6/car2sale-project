@@ -25,6 +25,8 @@
         <activity android:name=".PrecioDetailActivity" />
         <activity android:name=".KmDetailActivity" />
         <activity android:name=".MisAnunciosDetailActivity" />
+        <activity android:name=".FavoritosDetailActivity" />
+
 
 
     </application>
