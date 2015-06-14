@@ -165,7 +165,8 @@ public class Car2SaleMainActivity extends ListActivity {
                 return true;
 
             case R.id.MisAnuncios:
-
+                Intent MisAnuncios = new Intent(this, MisAnunciosDetailActivity.class);
+                startActivity(MisAnuncios);
                 return true;
 
             case R.id.Favoritos:
