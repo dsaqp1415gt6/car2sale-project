@@ -21,6 +21,10 @@
         <activity android:name=".FiltrarMarcasActivity" />
         <activity android:name=".FiltrarPreciosActivity" />
         <activity android:name=".FiltrarKmsActivity" />
+        <activity android:name=".MarcaDetailActivity" />
+        <activity android:name=".PrecioDetailActivity" />
+        <activity android:name=".KmDetailActivity" />
+        <activity android:name=".MisAnunciosDetailActivity" />
 
 
     </application>
