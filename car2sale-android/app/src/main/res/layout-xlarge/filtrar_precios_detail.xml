@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:id="@+id/tvJavi">
+
+
+        <!-- Header starts -->
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Button"
+            android:id="@+id/button" android:layout_gravity="center"
+            android:visibility="invisible"/>
+        <ImageView
+            android:src="@drawable/p1000euros"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetail1000euros"
+            android:layout_gravity="center"
+            android:padding="15dp"/>
+
+        <ImageView
+            android:src="@drawable/p3000euros"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetail3000euros"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/tvDetail1000euros"
+            android:layout_toEndOf="@+id/tvDetail1000euros" />
+
+        <ImageView
+            android:src="@drawable/p5000euros"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetail5000euros"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/tvDetail3000euros"
+            android:layout_toEndOf="@+id/tvDetail3000euros" />
+
+        <ImageView
+            android:src="@drawable/p7000euros"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetail7000euros"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_below="@+id/tvDetail1000euros"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <ImageView
+            android:src="@drawable/p10000euros"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetail10000euros"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_below="@+id/tvDetail1000euros"
+            android:layout_toRightOf="@+id/tvDetail1000euros"
+            android:layout_toEndOf="@+id/tvDetail1000euros" />
+
+        <ImageView
+            android:src="@drawable/p15000euros"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetail15000euros"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_above="@+id/tvDetail25000euros"
+            android:layout_alignLeft="@+id/tvDetail30000euros"
+            android:layout_alignStart="@+id/tvDetail30000euros" />
+
+        <ImageView
+            android:src="@drawable/p20000euros"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetail20000euros"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_below="@+id/tvDetail7000euros"
+            android:layout_alignLeft="@+id/tvDetail40000euros"
+            android:layout_alignStart="@+id/tvDetail40000euros" />
+
+        <ImageView
+            android:src="@drawable/p25000euros"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetail25000euros"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_below="@+id/tvDetail7000euros"
+            android:layout_toRightOf="@+id/tvDetail7000euros"
+            android:layout_toEndOf="@+id/tvDetail7000euros" />
+
+        <ImageView
+            android:src="@drawable/p30000euros"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetail30000euros"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_below="@+id/tvDetail15000euros"
+            android:layout_toRightOf="@+id/tvDetail50000euros"
+            android:layout_toEndOf="@+id/tvDetail50000euros" />
+
+        <ImageView
+            android:src="@drawable/p40000euros"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetail40000euros"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_below="@+id/tvDetail20000euros"
+            android:layout_toLeftOf="@+id/tvDetail50000euros"
+            android:layout_toStartOf="@+id/tvDetail50000euros" />
+
+        <ImageView
+            android:src="@drawable/p50000euros"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetail50000euros"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_below="@+id/tvDetail25000euros"
+            android:layout_toRightOf="@+id/button"
+            android:layout_toEndOf="@+id/button" />
+
+        <ImageView
+            android:src="@drawable/p70000euros"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/tvDetail70000euros"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:layout_alignTop="@+id/tvDetail50000euros"
+            android:layout_alignLeft="@+id/tvDetail30000euros"
+            android:layout_alignStart="@+id/tvDetail30000euros" />
+
+
+
+    </RelativeLayout>
+
+</ScrollView>

@@ -229,7 +229,212 @@ public class Car2SaleAPI {
 
 
     }
-   
+    public AnuncioCollection getPrecio(String Precio) throws AppException {
+        AnuncioCollection anuncios = new AnuncioCollection();
+        precio= Precio;
+
+        HttpURLConnection urlConnection = null;
+        try {
+            String preURL = rootAPI.getLinks().get("collection").getTarget();
+            String URL = preURL + "/precios/" + Precio;
+            System.out.println(URL);
+            urlConnection = (HttpURLConnection) new URL(URL).openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setDoInput(true);
+            urlConnection.connect();
+            System.out.println("hemos conectado");
+        } catch (IOException e) {
+            throw new AppException(
+                    "Can't connect to Car2Sale API Web Service");
+        }
+        BufferedReader reader;
+
+        try {
+            reader = new BufferedReader(new InputStreamReader(
+                    urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+
+            JSONObject jsonObject = new JSONObject(sb.toString());
+
+            JSONArray jsonLinks = jsonObject.getJSONArray("links");
+
+            parseLinks(jsonLinks, anuncios.getLinks());
+
+            anuncios.setNewestTimestamp(jsonObject.getLong("newestTimestamp"));
+            anuncios.setOldestTimestamp(jsonObject.getLong("oldestTimestamp"));
+            JSONArray jsonAnuncios = jsonObject.getJSONArray("anuncios");
+
+            for (int i = 0; i < jsonAnuncios.length(); i++) {
+                Anuncio anuncio = new Anuncio();
+                JSONObject jsonAnuncio = jsonAnuncios.getJSONObject(i);
+                anuncio.setIdanuncio(jsonAnuncio.getString("idanuncio"));
+                anuncio.setContador(jsonAnuncio.getString("contador"));
+                anuncio.setTitulo(jsonAnuncio.getString("titulo"));
+                anuncio.setDescripcion(jsonAnuncio.getString("descripcion"));
+                anuncio.setMarca(jsonAnuncio.getString("marca"));
+                anuncio.setModelo(jsonAnuncio.getString("modelo"));
+                anuncio.setKm(jsonAnuncio.getString("km"));
+                anuncio.setPrecio(jsonAnuncio.getString("precio"));
+                anuncio.setProvincia(jsonAnuncio.getString("provincia"));
+                anuncio.setLast_modified(jsonAnuncio.getLong("last_modified"));
+                anuncio.setCreation_timestamp(jsonAnuncio.getLong("creation_timestamp"));
+                jsonLinks = jsonAnuncio.getJSONArray("links");
+                parseLinks(jsonLinks, anuncio.getLinks());
+                anuncios.getAnuncios().add(anuncio);
+            }
+        } catch (IOException e) {
+            throw new AppException(
+                    "Can't get response from Car2Sale API Web Service");
+        } catch (JSONException e) {
+            throw new AppException("Error parsing Car2Sale Root API");
+        }
+
+        return anuncios;
+
+
+    }
+
+    public AnuncioCollection getKms(String Km) throws AppException {
+        AnuncioCollection anuncios = new AnuncioCollection();
+        km= Km;
+
+        HttpURLConnection urlConnection = null;
+        try {
+            String preURL = rootAPI.getLinks().get("collection").getTarget();
+            String URL = preURL + "/kms/" + km;
+            System.out.println(URL);
+            urlConnection = (HttpURLConnection) new URL(URL).openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setDoInput(true);
+            urlConnection.connect();
+            System.out.println("hemos conectado");
+        } catch (IOException e) {
+            throw new AppException(
+                    "Can't connect to Car2Sale API Web Service");
+        }
+        BufferedReader reader;
+
+        try {
+            reader = new BufferedReader(new InputStreamReader(
+                    urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+
+            JSONObject jsonObject = new JSONObject(sb.toString());
+
+            JSONArray jsonLinks = jsonObject.getJSONArray("links");
+
+            parseLinks(jsonLinks, anuncios.getLinks());
+
+            anuncios.setNewestTimestamp(jsonObject.getLong("newestTimestamp"));
+            anuncios.setOldestTimestamp(jsonObject.getLong("oldestTimestamp"));
+            JSONArray jsonAnuncios = jsonObject.getJSONArray("anuncios");
+
+            for (int i = 0; i < jsonAnuncios.length(); i++) {
+                Anuncio anuncio = new Anuncio();
+                JSONObject jsonAnuncio = jsonAnuncios.getJSONObject(i);
+                anuncio.setIdanuncio(jsonAnuncio.getString("idanuncio"));
+                anuncio.setContador(jsonAnuncio.getString("contador"));
+                anuncio.setTitulo(jsonAnuncio.getString("titulo"));
+                anuncio.setDescripcion(jsonAnuncio.getString("descripcion"));
+                anuncio.setMarca(jsonAnuncio.getString("marca"));
+                anuncio.setModelo(jsonAnuncio.getString("modelo"));
+                anuncio.setKm(jsonAnuncio.getString("km"));
+                anuncio.setPrecio(jsonAnuncio.getString("precio"));
+                anuncio.setProvincia(jsonAnuncio.getString("provincia"));
+                anuncio.setLast_modified(jsonAnuncio.getLong("last_modified"));
+                anuncio.setCreation_timestamp(jsonAnuncio.getLong("creation_timestamp"));
+                jsonLinks = jsonAnuncio.getJSONArray("links");
+                parseLinks(jsonLinks, anuncio.getLinks());
+                anuncios.getAnuncios().add(anuncio);
+            }
+        } catch (IOException e) {
+            throw new AppException(
+                    "Can't get response from Car2Sale API Web Service");
+        } catch (JSONException e) {
+            throw new AppException("Error parsing Car2Sale Root API");
+        }
+
+        return anuncios;
+
+
+    }
+    public AnuncioCollection getMisAnuncios() throws AppException {
+        AnuncioCollection anuncios = new AnuncioCollection();
+
+
+        HttpURLConnection urlConnection = null;
+        try {
+            String preURL = rootAPI.getLinks().get("collection").getTarget();
+            String URL = preURL + "/misanuncios";
+            System.out.println(URL);
+            urlConnection = (HttpURLConnection) new URL(URL).openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setDoInput(true);
+            urlConnection.connect();
+            System.out.println("hemos conectado");
+        } catch (IOException e) {
+            throw new AppException(
+                    "Can't connect to Car2Sale API Web Service");
+        }
+        BufferedReader reader;
+
+        try {
+            reader = new BufferedReader(new InputStreamReader(
+                    urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+
+            JSONObject jsonObject = new JSONObject(sb.toString());
+
+            JSONArray jsonLinks = jsonObject.getJSONArray("links");
+
+            parseLinks(jsonLinks, anuncios.getLinks());
+
+            anuncios.setNewestTimestamp(jsonObject.getLong("newestTimestamp"));
+            anuncios.setOldestTimestamp(jsonObject.getLong("oldestTimestamp"));
+            JSONArray jsonAnuncios = jsonObject.getJSONArray("anuncios");
+
+            for (int i = 0; i < jsonAnuncios.length(); i++) {
+                Anuncio anuncio = new Anuncio();
+                JSONObject jsonAnuncio = jsonAnuncios.getJSONObject(i);
+                anuncio.setIdanuncio(jsonAnuncio.getString("idanuncio"));
+                anuncio.setContador(jsonAnuncio.getString("contador"));
+                anuncio.setTitulo(jsonAnuncio.getString("titulo"));
+                anuncio.setDescripcion(jsonAnuncio.getString("descripcion"));
+                anuncio.setMarca(jsonAnuncio.getString("marca"));
+                anuncio.setModelo(jsonAnuncio.getString("modelo"));
+                anuncio.setKm(jsonAnuncio.getString("km"));
+                anuncio.setPrecio(jsonAnuncio.getString("precio"));
+                anuncio.setProvincia(jsonAnuncio.getString("provincia"));
+                anuncio.setLast_modified(jsonAnuncio.getLong("last_modified"));
+                anuncio.setCreation_timestamp(jsonAnuncio.getLong("creation_timestamp"));
+                jsonLinks = jsonAnuncio.getJSONArray("links");
+                parseLinks(jsonLinks, anuncio.getLinks());
+                anuncios.getAnuncios().add(anuncio);
+            }
+        } catch (IOException e) {
+            throw new AppException(
+                    "Can't get response from Car2Sale API Web Service");
+        } catch (JSONException e) {
+            throw new AppException("Error parsing Car2Sale Root API");
+        }
+
+        return anuncios;
+
+
+    }
+
     public Anuncio getAnuncio(String urlanuncio) throws AppException {
         Anuncio anuncio = new Anuncio();
 

@@ -19,6 +19,8 @@
         <activity android:name=".Car2SaleMainActivity" />
         <activity android:name=".AnuncioDetailActivity" />
         <activity android:name=".FiltrarMarcasActivity" />
+        <activity android:name=".FiltrarPreciosActivity" />
+        <activity android:name=".FiltrarKmsActivity" />
 
 
     </application>
