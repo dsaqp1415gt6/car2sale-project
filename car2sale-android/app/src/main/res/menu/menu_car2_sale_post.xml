@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".LibrosMainActivity">
+
+    <item
+        android:id="@+id/PostFavoritos"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="@string/postfavoritos"
+        app:showAsAction="always|withText" />
+    <item
+        android:id="@+id/PostMensaje"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="@string/postmensaje"
+        app:showAsAction="always|withText" />
+
+</menu>

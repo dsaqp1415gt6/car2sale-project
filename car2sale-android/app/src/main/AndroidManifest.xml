@@ -26,9 +26,10 @@
         <activity android:name=".KmDetailActivity" />
         <activity android:name=".MisAnunciosDetailActivity" />
         <activity android:name=".FavoritosDetailActivity" />
-
-
-
+        <activity android:name=".MensajesDetailActivity" />
+        <activity android:name=".WriteMensajeActivity" />
+        <activity android:name=".WriteFavoritoActivity" />
+        <activity android:name=".AnuncioActivity" />
     </application>
 
 </manifest>

@@ -434,6 +434,7 @@ public class Car2SaleAPI {
 
 
     }
+
     public AnuncioCollection getMisFavoritos() throws AppException {
         FavoritoCollection favoritos = new FavoritoCollection();
         AnuncioCollection anuncios = new AnuncioCollection();
@@ -497,6 +498,70 @@ public class Car2SaleAPI {
 
     }
 
+    public MensajeCollection getMensajes() throws AppException {
+        MensajeCollection mensajes = new MensajeCollection();
+
+
+        HttpURLConnection urlConnection = null;
+        try {
+            String preURL = rootAPI.getLinks().get("mensajes").getTarget();
+            String URL = preURL;
+            System.out.println(URL);
+            urlConnection = (HttpURLConnection) new URL(URL).openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setDoInput(true);
+            urlConnection.connect();
+            System.out.println("hemos conectado");
+        } catch (IOException e) {
+            throw new AppException(
+                    "Can't connect to Car2Sale API Web Service");
+        }
+        BufferedReader reader;
+
+        try {
+            reader = new BufferedReader(new InputStreamReader(
+                    urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+
+            JSONObject jsonObject = new JSONObject(sb.toString());
+
+            JSONArray jsonLinks = jsonObject.getJSONArray("links");
+
+            parseLinks(jsonLinks, mensajes.getLinks());
+
+            mensajes.setNewestTimestamp(jsonObject.getLong("newestTimestamp"));
+            mensajes.setOldestTimestamp(jsonObject.getLong("oldestTimestamp"));
+            JSONArray jsonMensajes = jsonObject.getJSONArray("mensajes");
+
+            for (int i = 0; i < jsonMensajes.length(); i++) {
+                Mensaje mensaje = new Mensaje();
+                JSONObject jsonMensaje = jsonMensajes.getJSONObject(i);
+                mensaje.setIdmensaje(jsonMensaje.getString("idmensaje"));
+                mensaje.setUsuarioenvia(jsonMensaje.getString("usuarioenvia"));
+                mensaje.setUsuariorecibe(jsonMensaje.getString("usuariorecibe"));
+                mensaje.setAnuncio(jsonMensaje.getString("anuncio"));
+                mensaje.setMensaje(jsonMensaje.getString("mensaje"));
+                mensaje.setLast_modified(jsonMensaje.getLong("last_modified"));
+                mensaje.setCreation_timestamp(jsonMensaje.getLong("creation_timestamp"));
+                jsonLinks = jsonMensaje.getJSONArray("links");
+                parseLinks(jsonLinks, mensaje.getLinks());
+                mensajes.getMensajes().add(mensaje);
+            }
+        } catch (IOException e) {
+            throw new AppException(
+                    "Can't get response from Car2Sale API Web Service");
+        } catch (JSONException e) {
+            throw new AppException("Error parsing Car2Sale Root API");
+        }
+
+        return mensajes;
+
+
+    }
     public Anuncio getAnuncio(String urlanuncio) throws AppException {
         Anuncio anuncio = new Anuncio();
 
@@ -546,7 +611,133 @@ public class Car2SaleAPI {
 
         return anuncio;
     }
+    public Mensaje createMensaje(String message) throws AppException {
+        Mensaje mensaje = new Mensaje();
+        mensaje.setMensaje(message);
+        mensaje.setUsuariorecibe(usuariorecibe);
+        mensaje.setAnuncio(anun);
+        HttpURLConnection urlConnection = null;
+        try {
+            JSONObject jsonMensaje = createJsonMensaje(mensaje);
+            String preURL = rootAPI.getLinks().get("mensajes").getTarget();
+            String URL = preURL;
+            //    int code = urlConnection.getResponseCode();
+            System.out.println(URL);
+            urlConnection = (HttpURLConnection) new URL(URL).openConnection();
+            urlConnection.setRequestProperty("Accept",
+                    MediaType.MENSAJES_API_MENSAJE);
+            urlConnection.setRequestProperty("Content-Type",
+                    MediaType.MENSAJES_API_MENSAJE);
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
+            urlConnection.connect();
 
+            PrintWriter writer = new PrintWriter(
+                    urlConnection.getOutputStream());
+            writer.println(jsonMensaje.toString());
+            writer.close();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+
+
+            jsonMensaje = new JSONObject(sb.toString());
+
+            mensaje.setAnuncio(jsonMensaje.getString("anuncio"));
+            mensaje.setCreation_timestamp(jsonMensaje.getLong("creation_timestamp"));
+            mensaje.setIdmensaje(jsonMensaje.getString("idmensaje"));
+            mensaje.setLast_modified(jsonMensaje.getLong("last_modified"));
+            mensaje.setMensaje(jsonMensaje.getString("mensaje"));
+            mensaje.setUsuarioenvia(jsonMensaje.getString("usuarioenvia"));
+            mensaje.setUsuariorecibe(jsonMensaje.getString("usuariorecibe"));
+            JSONArray jsonLinks = jsonMensaje.getJSONArray("links");
+            parseLinks(jsonLinks, mensaje.getLinks());
+        } catch (JSONException e) {
+            Log.e(TAG, e.getMessage(), e);
+            throw new AppException("Error parsing response");
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
+            throw new AppException("Error getting response");
+        } finally {
+            if (urlConnection != null)
+                urlConnection.disconnect();
+        }
+
+        return mensaje;
+    }
+
+    private JSONObject createJsonMensaje(Mensaje mensaje) throws JSONException {
+        JSONObject jsonMensaje = new JSONObject();
+        jsonMensaje.put("usuariorecibe", mensaje.getUsuariorecibe());
+        jsonMensaje.put("mensaje", mensaje.getMensaje());
+        jsonMensaje.put("anuncio", mensaje.getAnuncio());
+
+        return jsonMensaje;
+    }
+    public Favorito createFavorito( ) throws AppException {
+        Favorito favorito = new Favorito();
+        favorito.setIdanuncio(anun);
+        HttpURLConnection urlConnection = null;
+        try {
+            JSONObject jsonFavorito = createJsonFavorito(favorito);
+            String preURL = rootAPI.getLinks().get("favoritos").getTarget();
+            String URL = preURL;
+            //    int code = urlConnection.getResponseCode();
+            System.out.println(URL);
+            urlConnection = (HttpURLConnection) new URL(URL).openConnection();
+            urlConnection.setRequestProperty("Accept",
+                    MediaType.FAVORITOS_API_FAVORITO);
+            urlConnection.setRequestProperty("Content-Type",
+                    MediaType.FAVORITOS_API_FAVORITO);
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
+            urlConnection.connect();
+
+            PrintWriter writer = new PrintWriter(
+                    urlConnection.getOutputStream());
+            writer.println(jsonFavorito.toString());
+            writer.close();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+
+
+            jsonFavorito = new JSONObject(sb.toString());
+
+            favorito.setCreation_timestamp(jsonFavorito.getLong("creation_timestamp"));
+            favorito.setIdanuncio(jsonFavorito.getString("idanuncio"));
+            favorito.setLast_modified(jsonFavorito.getLong("last_modified"));
+            JSONArray jsonLinks = jsonFavorito.getJSONArray("links");
+            parseLinks(jsonLinks, favorito.getLinks());
+        } catch (JSONException e) {
+            Log.e(TAG, e.getMessage(), e);
+            throw new AppException("Error parsing response");
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
+            throw new AppException("Error getting response");
+        } finally {
+            if (urlConnection != null)
+                urlConnection.disconnect();
+        }
+
+        return favorito;
+    }
+
+    private JSONObject createJsonFavorito(Favorito favorito) throws JSONException {
+        JSONObject jsonFavorito = new JSONObject();
+        jsonFavorito.put("idanuncio", favorito.getIdanuncio());
+        return jsonFavorito;
+    }
     public Boolean checkLogin(String username, String password) throws AppException {
         Log.d(TAG, "checkLogin()");
         Boolean loginOK = false;

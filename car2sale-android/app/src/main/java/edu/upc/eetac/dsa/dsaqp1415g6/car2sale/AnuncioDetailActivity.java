@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,7 +19,7 @@ import java.util.Date;
 import edu.upc.eetac.dsa.dsaqp1415g6.car2sale.api.Anuncio;
 import edu.upc.eetac.dsa.dsaqp1415g6.car2sale.api.AppException;
 import edu.upc.eetac.dsa.dsaqp1415g6.car2sale.api.Car2SaleAPI;
-
+import edu.upc.eetac.dsa.dsaqp1415g6.car2sale.api.Mensaje;
 
 
 public class AnuncioDetailActivity extends Activity {
@@ -96,7 +98,29 @@ public class AnuncioDetailActivity extends Activity {
             pd.show();
         }
     }
-
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_car2_sale_post, menu);
+        return true;
+    }
+    private ArrayList<Mensaje> mensajesList;
+    private MensajeAdapter adapter;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.PostFavoritos:
+                Intent favorito = new Intent(this, WriteFavoritoActivity.class);
+                startActivityForResult(favorito, WRITE_ACTIVITY);
+                return true;
+            case R.id.PostMensaje:
+                Intent mensaje = new Intent(this, WriteMensajeActivity.class);
+                startActivityForResult(mensaje, WRITE_ACTIVITY);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    private final static int WRITE_ACTIVITY=0;
 
 }

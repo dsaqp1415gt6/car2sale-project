@@ -153,7 +153,6 @@ public class Car2SaleMainActivity extends ListActivity {
                 Intent intentMarca = new Intent(this, FiltrarMarcasActivity.class);
                 startActivity(intentMarca);
                 return true;
-
             case R.id.FiltrarPrecio:
                 Intent intentPrecios = new Intent(this, FiltrarPreciosActivity.class);
                 startActivity(intentPrecios);
@@ -174,9 +173,9 @@ public class Car2SaleMainActivity extends ListActivity {
                 startActivity(Favoritos);
                 return true;
 
-
             case R.id.Mensajes:
-
+                Intent Mensajes = new Intent(this, MensajesDetailActivity.class);
+                startActivity(Mensajes);
                 return true;
 
 
